@@ -1,8 +1,5 @@
 #include "Grid.h"
 
-// ***************************************************************************
-// GRID CLASS
-// ***************************************************************************
 Grid::Grid(
     const int minimumFrequencyInHertz,
     const int maximumFrequencyInHertz,
@@ -66,6 +63,20 @@ void Grid::resized()
     calculateAmplitudeGrid(
         m_minimumVolumeInDecibels,
         m_maximumVolumeInDecibels );
+}
+
+
+// ============================================================================
+void Grid::setMaximumVolumeInDecibels( int volume )
+{
+    m_minimumVolumeInDecibels = volume;
+}
+
+
+
+void Grid::setMinimumVolumeInDecibels( int volume )
+{
+    m_maximumVolumeInDecibels = volume;
 }
 
 

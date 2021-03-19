@@ -1,10 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-
-// ***************************************************************************
-// SPECTRUM AUDIO PROCESSOR CLASS
-// ***************************************************************************
 SpectrumAudioProcessor::SpectrumAudioProcessor()
     : AudioProcessor(
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -103,7 +99,7 @@ void SpectrumAudioProcessor::processBlock(
         for ( auto sample = 0; sample < buffer.getNumSamples(); ++sample )
         {
             m_analyser.pushNextSampleIntoFifo(
-                leftChannelData[ sample ] +
+                leftChannelData[ sample ],
                 rightChannelData[ sample ] );
         }
     }

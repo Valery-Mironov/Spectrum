@@ -2,6 +2,16 @@
 
 #include <JuceHeader.h>
 
+/*
+    TASKS
+    
+    Speed up calculations for large "Block" values
+    Correct volumes when switching "Channel"
+    Setting "Avg" by the nearest 1-8 volume values
+    Automatic calculation of volume limiters for "Auto" mode in "Scale Y"
+    Manual setting of limiters via the "Scale Y" sliders
+*/
+
 // ****************************************************************************
 // ANALYSER CLASS
 // ****************************************************************************
@@ -12,8 +22,11 @@ public:
     
     
     // ========================================================================
-    void pushNextSampleIntoFifo( float sample ) noexcept;
-    void drawNextFrameOfSpectrum();
+    void setChannels( int selectedChannels );
+    
+    
+    // ========================================================================
+    void setFFTBlockSize( size_t newFFTOrder );
     
     
     // ========================================================================
@@ -22,33 +35,49 @@ public:
     
     
     // ========================================================================
-    float getScopeData( size_t index );
-    float getOffset();
     size_t getScopeSize();
+    float getScopeData( size_t index );
+    float getScopeMaximumsData( size_t index );
+    void resetScopeMaximumsData();
+    float getOffset();
     
     
     // ========================================================================
-    void setFFTBlockSize( size_t newFFTOrder );
+    void setVolumeScaleDynamicRange( bool isDynamamic );
+    void setVolumeRangeInDecibels( float minimum, float maximum );
+    
+    
+    // ========================================================================
+    void pushNextSampleIntoFifo(
+        float leftChannelSample,
+        float rightChannelSample ) noexcept;
+    void drawNextFrameOfSpectrum();
     
 private:
     // ========================================================================
-    void drawFrame( juce::Graphics &g );
+    void calculateMaximumVolumes();
     
     
     // ========================================================================
-    float m_offset;
+    int m_channels;
+    
+    bool m_blockSizeDefined;
+    bool m_nextFFTBlockReady;
+    bool m_volumeScaleRangeIsDynamamic;
     
     size_t m_fftOrder;
     size_t m_fftSize;
     size_t m_scopeSize;
     size_t m_fifoIndex;
     
-    bool m_nextFFTBlockReady { false };
-    bool m_blockSizeDefined { false };
-    
     std::vector<float> m_fifo;
     std::vector<float> m_fftData;
     std::vector<float> m_scopeData;
+    std::vector<float> m_scopeMaximumsData;
+    
+    float m_offset;
+    float m_maximumVolumeInDecibels;
+    float m_minimumVolumeInDecibels;
     
     
     // ========================================================================

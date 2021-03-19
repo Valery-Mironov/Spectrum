@@ -1,15 +1,12 @@
 #include "Visualizer.h"
 
-// ****************************************************************************
-// VISUALISER CLASS
-// ****************************************************************************
 Visualizer::Visualizer( Analyser &a ) :
     // Min Hz, Max Hz, Min dB, Max dB
     m_grid( 24, 24000, -120, 12 ),
-    m_curve( a )
+    m_graph( a )
 {
     addAndMakeVisible( m_grid );
-    addAndMakeVisible( m_curve );
+    addAndMakeVisible( m_graph );
 }
 
 
@@ -36,5 +33,19 @@ void Visualizer::resized()
     auto area = getLocalBounds().reduced( m_marginInPixels );
     
     m_grid.setBounds( area );
-    m_curve.setBounds( area );
+    m_graph.setBounds( area );
+}
+
+
+// ============================================================================
+Graph &Visualizer::getReferenceToTheCurve()
+{
+    return m_graph;
+}
+
+
+
+Grid &Visualizer::getReferenceToTheGrid()
+{
+    return m_grid;
 }

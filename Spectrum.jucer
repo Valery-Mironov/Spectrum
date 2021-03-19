@@ -5,16 +5,54 @@
   <MAINGROUP id="eDuWj8" name="Spectrum">
     <GROUP id="{5E62CE1F-02EE-0497-2F80-6274BA113368}" name="Source">
       <GROUP id="{163C6E0E-C963-9BF4-FB3E-F835DF907FB9}" name="Controls">
+        <GROUP id="{6C04E1D5-13E4-5D4A-461E-061280C344F7}" name="Categories">
+          <FILE id="g08SaR" name="AvgControl.cpp" compile="1" resource="0" file="Source/Controls/Categories/AvgControl.cpp"/>
+          <FILE id="QMTWMs" name="AvgControl.h" compile="0" resource="0" file="Source/Controls/Categories/AvgControl.h"/>
+          <FILE id="rFvkRz" name="BlockControl.cpp" compile="1" resource="0"
+                file="Source/Controls/Categories/BlockControl.cpp"/>
+          <FILE id="KU2xt1" name="BlockControl.h" compile="0" resource="0" file="Source/Controls/Categories/BlockControl.h"/>
+          <FILE id="Uyjned" name="ChannelControls.cpp" compile="1" resource="0"
+                file="Source/Controls/Categories/ChannelControls.cpp"/>
+          <FILE id="IBUdyQ" name="ChannelControls.h" compile="0" resource="0"
+                file="Source/Controls/Categories/ChannelControls.h"/>
+          <FILE id="wbyc7B" name="GraphControls.cpp" compile="1" resource="0"
+                file="Source/Controls/Categories/GraphControls.cpp"/>
+          <FILE id="iMDkCI" name="GraphControls.h" compile="0" resource="0" file="Source/Controls/Categories/GraphControls.h"/>
+          <FILE id="l2HwLl" name="RefreshControl.cpp" compile="1" resource="0"
+                file="Source/Controls/Categories/RefreshControl.cpp"/>
+          <FILE id="kNGLTv" name="RefreshControl.h" compile="0" resource="0"
+                file="Source/Controls/Categories/RefreshControl.h"/>
+          <FILE id="kMPhON" name="ScaleXControls.cpp" compile="1" resource="0"
+                file="Source/Controls/Categories/ScaleXControls.cpp"/>
+          <FILE id="ZYUf87" name="ScaleXControls.h" compile="0" resource="0"
+                file="Source/Controls/Categories/ScaleXControls.h"/>
+          <FILE id="oAUtLD" name="ScaleYControls.cpp" compile="1" resource="0"
+                file="Source/Controls/Categories/ScaleYControls.cpp"/>
+          <FILE id="mxiK7p" name="ScaleYControls.h" compile="0" resource="0"
+                file="Source/Controls/Categories/ScaleYControls.h"/>
+        </GROUP>
         <FILE id="ve5gP2" name="Controls.cpp" compile="1" resource="0" file="Source/Controls/Controls.cpp"/>
         <FILE id="RYGPRQ" name="Controls.h" compile="0" resource="0" file="Source/Controls/Controls.h"/>
       </GROUP>
       <GROUP id="{904D22F2-AE0A-B010-C7EE-E0368FCB88D6}" name="Visualizer">
+        <GROUP id="{F6464C06-0EED-C331-527D-23AE814942CA}" name="Layers">
+          <GROUP id="{5F545FC2-3A5B-1377-BB32-C7DD852D64A2}" name="GraphElements">
+            <FILE id="BzIqei" name="GraphMaximumsLine.cpp" compile="1" resource="0"
+                  file="Source/Visualizer/Layers/GraphElements/GraphMaximumsLine.cpp"/>
+            <FILE id="dLvNZM" name="GraphMaximumsLine.h" compile="0" resource="0"
+                  file="Source/Visualizer/Layers/GraphElements/GraphMaximumsLine.h"/>
+            <FILE id="eRnspJ" name="GraphBins.cpp" compile="1" resource="0" file="Source/Visualizer/Layers/GraphElements/GraphBins.cpp"/>
+            <FILE id="jBfEcv" name="GraphBins.h" compile="0" resource="0" file="Source/Visualizer/Layers/GraphElements/GraphBins.h"/>
+            <FILE id="nLqShU" name="GraphLine.cpp" compile="1" resource="0" file="Source/Visualizer/Layers/GraphElements/GraphLine.cpp"/>
+            <FILE id="xlztgb" name="GraphLine.h" compile="0" resource="0" file="Source/Visualizer/Layers/GraphElements/GraphLine.h"/>
+          </GROUP>
+          <FILE id="ervzDt" name="Graph.cpp" compile="1" resource="0" file="Source/Visualizer/Layers/Graph.cpp"/>
+          <FILE id="TrHGwa" name="Graph.h" compile="0" resource="0" file="Source/Visualizer/Layers/Graph.h"/>
+          <FILE id="nBYGSz" name="Grid.cpp" compile="1" resource="0" file="Source/Visualizer/Layers/Grid.cpp"/>
+          <FILE id="wOKcWx" name="Grid.h" compile="0" resource="0" file="Source/Visualizer/Layers/Grid.h"/>
+        </GROUP>
         <FILE id="Ew3G0T" name="Analyser.cpp" compile="1" resource="0" file="Source/Visualizer/Analyser.cpp"/>
         <FILE id="f49kFd" name="Analyser.h" compile="0" resource="0" file="Source/Visualizer/Analyser.h"/>
-        <FILE id="vYWKKs" name="Curve.cpp" compile="1" resource="0" file="Source/Visualizer/Curve.cpp"/>
-        <FILE id="zojJ4M" name="Curve.h" compile="0" resource="0" file="Source/Visualizer/Curve.h"/>
-        <FILE id="F7qHTb" name="Grid.cpp" compile="1" resource="0" file="Source/Visualizer/Grid.cpp"/>
-        <FILE id="Ei7LBK" name="Grid.h" compile="0" resource="0" file="Source/Visualizer/Grid.h"/>
         <FILE id="hC5m3N" name="Visualizer.cpp" compile="1" resource="0" file="Source/Visualizer/Visualizer.cpp"/>
         <FILE id="F8iixs" name="Visualizer.h" compile="0" resource="0" file="Source/Visualizer/Visualizer.h"/>
       </GROUP>

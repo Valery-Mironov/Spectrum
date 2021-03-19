@@ -1,18 +1,16 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "Analyser.h"
+#include "../../Analyser.h"
 
 // ****************************************************************************
-// CURVE CLASS
+// GRAPH LINE CLASS
 // ****************************************************************************
-class Curve :
-    public juce::Component,
-    private juce::Timer
+class GraphLine : public juce::Component
 {
 public:
-    Curve( Analyser &a );
-    ~Curve() override;
+    GraphLine( Analyser &a );
+    ~GraphLine() override;
     
     
     // ========================================================================
@@ -21,20 +19,21 @@ public:
     
     
     // ========================================================================
-    void timerCallback() override;
-    void setScaleType( bool isLogarithmicScale );
+    void setScaleType( bool isLogarithmic );
     
-private:
+protected:
     // ========================================================================
     template<class Type>
     float normalizeValue( Type T );
-    void drawFrame( juce::Graphics &g );
+    virtual float getScopeDataFromAnalyser( size_t index );
+    virtual void drawFrame( juce::Graphics &g );
     
     
     // ========================================================================
     Analyser &mr_analyser;
-    bool logarithmicScale { true };
+    bool m_isLogarithmicScale { true };
+    
     
     // ========================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( Curve )
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( GraphLine )
 };

@@ -2,6 +2,13 @@
 
 #include <JuceHeader.h>
 
+/*
+    TASKS
+    
+    Adaptive scale on the volume axis
+    Volume axis labels
+*/
+
 // ****************************************************************************
 // GRID CLASS
 // ****************************************************************************
@@ -19,6 +26,11 @@ public:
     // ========================================================================
     void paint( juce::Graphics &g ) override;
     void resized() override;
+    
+    
+    // ========================================================================
+    void setMaximumVolumeInDecibels( int volume );
+    void setMinimumVolumeInDecibels( int volume );
     
 private:
     // ========================================================================
@@ -48,8 +60,8 @@ private:
     static constexpr int m_stepInDecibels { 12 };
     static constexpr int m_coefficient { 10 };
     
-    const int m_maximumVolumeInDecibels;
-    const int m_minimumVolumeInDecibels;
+    int m_maximumVolumeInDecibels;
+    int m_minimumVolumeInDecibels;
     
     // Possible to convert to 'map'
     std::vector<int> m_volumeGridPoints;

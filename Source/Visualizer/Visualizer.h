@@ -1,8 +1,8 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "Grid.h"
-#include "Curve.h"
+#include "Layers/Grid.h"
+#include "Layers/Graph.h"
 #include "Analyser.h"
 
 // ****************************************************************************
@@ -20,6 +20,11 @@ public:
     void paint( juce::Graphics &g ) override;
     void resized() override;
     
+    
+    // ========================================================================
+    Graph &getReferenceToTheCurve();
+    Grid &getReferenceToTheGrid();
+    
 private:
     // ========================================================================
     // Must be set by the 'set' method
@@ -28,7 +33,7 @@ private:
     static constexpr double m_marginInPixels { 10 };
     
     Grid m_grid;
-    Curve m_curve;
+    Graph m_graph;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( Visualizer )
 };

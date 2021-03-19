@@ -1,25 +1,11 @@
-#include <JuceHeader.h>
-#include "Curve.h"
+#include "GraphLine.h"
 
-
-// ****************************************************************************
-// CURVE CLASS
-// ****************************************************************************
-Curve::Curve( Analyser &a ) : mr_analyser( a )
-{
-    startTimer( 60 );
-}
-
-
-
-Curve::~Curve()
-{
-    stopTimer();
-}
+GraphLine::GraphLine( Analyser &analyser ) : mr_analyser( analyser ) {}
+GraphLine::~GraphLine() {}
 
 
 // ============================================================================
-void Curve::paint( juce::Graphics &g )
+void GraphLine::paint( juce::Graphics &g )
 {
     g.setColour( juce::Colours::white );
     drawFrame( g );
@@ -27,36 +13,31 @@ void Curve::paint( juce::Graphics &g )
 
 
 
-void Curve::resized()
+void GraphLine::resized()
 {
     
 }
 
 
 // ============================================================================
-void Curve::timerCallback()
+void GraphLine::setScaleType( bool isLogarithmic )
 {
-    if ( mr_analyser.getNextFFTBlockStatus() )
-    {
-        mr_analyser.drawNextFrameOfSpectrum();
-        mr_analyser.setNextFFTBlockStatus( false );
-        repaint();
-    }
+    m_isLogarithmicScale = isLogarithmic;
+    
+    std::cout << std::endl;
+    std::cout << "----------------> CURVE <----------------";
+    std::cout << std::endl;
+    std::cout << "Is logarithmic scale: ";
+    std::cout << std::boolalpha << m_isLogarithmicScale;
+    std::cout << std::endl;
 }
 
 
-
-void Curve::setScaleType( bool isLogarithmicScale )
-{
-    logarithmicScale = isLogarithmicScale;
-}
-
-
-// ========================================================================
+// ============================================================================
 template<class Type>
-float Curve::normalizeValue( Type T )
+float GraphLine::normalizeValue( Type T )
 {
-    if ( logarithmicScale )
+    if ( T != 0 && m_isLogarithmicScale )
     {
         return
             std::log10f( static_cast<float>( T ) / mr_analyser.getOffset() );
@@ -68,8 +49,15 @@ float Curve::normalizeValue( Type T )
 }
 
 
+float GraphLine::getScopeDataFromAnalyser( size_t index )
+{
+    return mr_analyser.getScopeData( index );
+}
+
+
+
 // ============================================================================
-void Curve::drawFrame( juce::Graphics &g )
+void GraphLine::drawFrame( juce::Graphics &g )
 {
     auto width  = static_cast<float>( getLocalBounds().getWidth() );
     auto height = static_cast<float>( getLocalBounds().getHeight() );
@@ -79,7 +67,7 @@ void Curve::drawFrame( juce::Graphics &g )
     curve.startNewSubPath(
         0.0f,
         juce::jmap(
-            mr_analyser.getScopeData( 0 ),
+            getScopeDataFromAnalyser( 0 ),
             0.0f,
             1.0f,
             height,
@@ -98,7 +86,7 @@ void Curve::drawFrame( juce::Graphics &g )
                     width ),
                 // Next point of the line along the ordinate axis
                 juce::jmap(
-                    mr_analyser.getScopeData( x ),
+                    getScopeDataFromAnalyser( x ),
                     0.0f,
                     1.0f,
                     height,
@@ -107,6 +95,6 @@ void Curve::drawFrame( juce::Graphics &g )
     }
     
     g.strokePath(
-        curve.createPathWithRoundedCorners( 1.0f ),
+        curve.createPathWithRoundedCorners( 128.0f ),
         juce::PathStrokeType( 1.0f ) );
 }

@@ -12,7 +12,7 @@ class SpectrumAudioProcessorEditor :
     public juce::AudioProcessorEditor
 {
 public:
-    SpectrumAudioProcessorEditor( SpectrumAudioProcessor &p, Analyser &v );
+    SpectrumAudioProcessorEditor( SpectrumAudioProcessor &p, Analyser &a );
     ~SpectrumAudioProcessorEditor() override;
     
     // ========================================================================
@@ -22,8 +22,8 @@ public:
 private:
     // ========================================================================
     SpectrumAudioProcessor &mr_audioProcessor;
-    Controls m_controls;
     Visualizer m_visualizer;
+    Controls m_controls;
     
     // Must be set by the 'set' method
     juce::Colour backgroundColour { 0xffd2d2d2 };

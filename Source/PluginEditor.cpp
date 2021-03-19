@@ -1,19 +1,15 @@
-#include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-// ****************************************************************************
-// SPECTRUM AUDIO PROCESSOR EDITOR CLASS
-// ****************************************************************************
 SpectrumAudioProcessorEditor::SpectrumAudioProcessorEditor(
     SpectrumAudioProcessor &p,
     Analyser &a ) :
         AudioProcessorEditor( &p ),
         mr_audioProcessor( p ),
-        m_controls( a ),
-        m_visualizer( a )
+        m_visualizer( a ),
+        m_controls( a, m_visualizer.getReferenceToTheCurve(), m_visualizer.getReferenceToTheGrid() )
 {
-    addAndMakeVisible( m_controls );
     addAndMakeVisible( m_visualizer );
+    addAndMakeVisible( m_controls );
     
     setResizable( true, true );
     setSize( 600, 240 );

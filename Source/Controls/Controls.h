@@ -2,6 +2,15 @@
 
 #include <JuceHeader.h>
 #include "../Visualizer/Analyser.h"
+#include "../Visualizer/Layers/Graph.h"
+#include "../Visualizer/Layers/Grid.h"
+#include "Categories/BlockControl.h"
+#include "Categories/ChannelControls.h"
+#include "Categories/RefreshControl.h"
+#include "Categories/AvgControl.h"
+#include "Categories/GraphControls.h"
+#include "Categories/ScaleXControls.h"
+#include "Categories/ScaleYControls.h"
 
 // ****************************************************************************
 // CONTROLS CLASS
@@ -9,7 +18,8 @@
 class Controls : public juce::Component
 {
 public:
-    Controls( Analyser &a );
+    // ========================================================================
+    Controls( Analyser &a, Graph &c, Grid &g );
     ~Controls() override;
     
     
@@ -19,37 +29,24 @@ public:
     
 private:
     // ========================================================================
-    Analyser &mr_analyser;
-    
     juce::Label m_blockLabel;
-    juce::ComboBox m_blockComboBox;
-    
     juce::Label m_channelLabel;
-    juce::TextButton m_leftTextButton;
-    juce::TextButton m_rightTextButton;
-    juce::TextButton m_leftPlusRightTextButton;
-    
     juce::Label m_refreshLabel;
-    juce::Slider m_refreshSlider;
-    
     juce::Label m_avgLabel;
-    juce::Slider m_avgSlider;
-    
     juce::Label m_graphLabel;
-    juce::TextButton m_lineTextButon;
-    juce::TextButton m_maxTextButton;
-    
     juce::Label m_scaleLabel;
-    juce::TextButton m_linTextButton;
-    juce::TextButton m_logTextButton;
-    juce::TextButton m_stTextButton;
+    juce::Label m_rangeLabel;
     
-    juce::TextButton m_rangeTextButton;
-    juce::Slider m_minimumVolumeSlider;
-    juce::Slider m_maximumVolumeSlider;
+    BlockControl m_blockControl;
+    ChannelControls m_channelControls;
+    RefreshControl m_refreshControl;
+    AvgControl m_avgControl;
+    GraphControls m_graphControls;
+    ScaleXControls m_scaleXControls;
+    ScaleYControls m_scaleYControls;
     
-    // Должен устанавливатсья 'set' методом
-    static constexpr double m_marginInPixels { 10 };
+    // Must be set by the 'set' method
+    static constexpr int m_marginInPixels { 10 };
     
     
     // ========================================================================
