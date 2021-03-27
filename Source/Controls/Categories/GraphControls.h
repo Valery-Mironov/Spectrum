@@ -1,7 +1,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../Visualizer/Layers/Graph.h"
 
 // ****************************************************************************
 // GRAPH CONTROLS CLASS
@@ -9,20 +8,23 @@
 class GraphControls : public juce::Component
 {
 public:
-    GraphControls( Graph &c );
+    GraphControls( juce::AudioProcessorValueTreeState & );
     ~GraphControls() override;
     
     
     // ========================================================================
-    void paint( juce::Graphics &g ) override;
     void resized() override;
 
 private:
     // ========================================================================
-    Graph &mr_curve;
+    juce::AudioProcessorValueTreeState &mr_audioProcessorValueTreeState;
     
-    juce::TextButton m_lineTextButon;
+    juce::TextButton m_lineTextButton;
     juce::TextButton m_maxTextButton;
+    
+    using Attachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
+    std::unique_ptr<Attachment> m_lineTextButtonAttachment;
+    std::unique_ptr<Attachment> m_maxTextButtonAttachment;
     
     
     // ========================================================================

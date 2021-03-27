@@ -8,17 +8,20 @@
 class AvgControl : public juce::Component
 {
 public:
-    AvgControl();
+    AvgControl( juce::AudioProcessorValueTreeState & );
     ~AvgControl() override;
     
     
     // ========================================================================
-    void paint( juce::Graphics &g ) override;
     void resized() override;
 
 private:
     // ========================================================================
+    juce::AudioProcessorValueTreeState &mr_audioProcessorValueTreeState;
     juce::Slider m_avgSlider;
+    
+    using Attachment = juce::AudioProcessorValueTreeState::SliderAttachment;
+    std::unique_ptr<Attachment> m_avgSliderAttachment;
     
     
     // ========================================================================

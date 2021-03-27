@@ -1,7 +1,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../Visualizer/Layers/Graph.h"
 
 // ****************************************************************************
 // REFRESH CONTROL CLASS
@@ -9,19 +8,20 @@
 class RefreshControl : public juce::Component
 {
 public:
-    RefreshControl( Graph &c );
+    RefreshControl( juce::AudioProcessorValueTreeState & );
     ~RefreshControl() override;
     
     
     // ========================================================================
-    void paint( juce::Graphics &g ) override;
     void resized() override;
 
 private:
     // ========================================================================
-    Graph &mr_curve;
-    
+    juce::AudioProcessorValueTreeState &mr_audioProcessorValueTreeState;
     juce::Slider m_refreshSlider;
+    
+    using Attachment = juce::AudioProcessorValueTreeState::SliderAttachment;
+    std::unique_ptr<Attachment> m_refreshSliderAttachment;
     
     
     // ========================================================================

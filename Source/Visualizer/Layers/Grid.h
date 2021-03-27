@@ -1,72 +1,67 @@
 #pragma once
 
 #include <JuceHeader.h>
-
-/*
-    TASKS
-    
-    Adaptive scale on the volume axis
-    Volume axis labels
-*/
+#include "GridElements/LogarithmicScale.h"
+#include "GridElements/LinearScale.h"
+#include "GridElements/NoteScale.h"
 
 // ****************************************************************************
 // GRID CLASS
 // ****************************************************************************
-class Grid : public juce::Component
+class Grid :
+    public juce::Component,
+    public juce::AudioProcessorValueTreeState::Listener
 {
 public:
-    Grid(
-        const int minimumFrequencyInHertz,
-        const int maximumFrequencyInHertz,
-        const int minimumVolumeInDecibels,
-        const int maximumVolumeInDecibels );
+    enum class GridStyles { linear, logarithmic, st };
+    
+    
+    // =======================================================================
+    Grid( juce::AudioProcessorValueTreeState & );
     ~Grid() override;
     
     
     // ========================================================================
-    void paint( juce::Graphics &g ) override;
+    void paint( juce::Graphics & ) override;
     void resized() override;
     
     
     // ========================================================================
-    void setMaximumVolumeInDecibels( int volume );
-    void setMinimumVolumeInDecibels( int volume );
+    void setGridColour( juce::Colour );
+    void setTextColour( juce::Colour );
     
 private:
     // ========================================================================
-    int getOffsetInHertz(
-        const int currentFrequencyInHertz );
-    int getCurrentFrequencyInHertz(
-        const int currentFrequencyInHertz,
-        const int offsetInHertz );
+    void parameterChanged( const juce::String &, float ) override;
     
     
     // ========================================================================
-    void calculateBaseTenLogarithm(
-        const int minimumFrequencyInHertz,
-        const int maximumFrequencyInHertz );
-    void calculateFrequencyGrid();
-    void calculateAmplitudeGrid(
-        const int miniumInDecibels,
-        const int maximumInDecibels );
+    void setGridStyle( GridStyles );
+    void setVolumeRangeInDecibels( int, int );
+    void calculateAmplitudeGrid();
     void addLabels();
     
     
-    
     // ========================================================================
-    // Must be set by the 'set' method
-    juce::Colour m_gridColour { 0xff848484 };
-    // Should be calculated automatically
-    static constexpr int m_stepInDecibels { 12 };
-    static constexpr int m_coefficient { 10 };
+    juce::AudioProcessorValueTreeState &mr_audioProcessorValueTreeState;
     
-    int m_maximumVolumeInDecibels;
-    int m_minimumVolumeInDecibels;
+    bool m_gridStyleIsLinear { false };
+    bool m_gridStyleIsLogarithmic { true };
+    bool m_gridStyleIsST { false };
     
-    // Possible to convert to 'map'
-    std::vector<int> m_volumeGridPoints;
-    std::map<int, float> m_baseTenLogarithm;
-    std::map<int, float> m_frequencyGridPoints;
+    LogarithmicScale m_logarithmicScale;
+    LinearScale m_linearScale;
+    NoteScale m_noteScale;
+    
+    juce::Colour m_gridColour { 0xff464646 };
+    juce::Colour m_textColour { 0xff848484 };
+    
+    std::atomic<int> m_maximumVolumeInDecibels { 12 };
+    std::atomic<int> m_minimumVolumeInDecibels { -120 };
+    std::atomic<int> m_firstOffsetInDecibels;
+    std::atomic<int> m_offsetInDecibels;
+    
+    std::vector<float> m_volumeGridPoints;
     std::map<int, std::unique_ptr<juce::Label>> m_labels;
     
     

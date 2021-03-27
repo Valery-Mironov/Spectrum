@@ -7,29 +7,22 @@ GraphLine::~GraphLine() {}
 // ============================================================================
 void GraphLine::paint( juce::Graphics &g )
 {
-    g.setColour( juce::Colours::white );
+    g.setColour( m_colour );
     drawFrame( g );
-}
-
-
-
-void GraphLine::resized()
-{
-    
 }
 
 
 // ============================================================================
 void GraphLine::setScaleType( bool isLogarithmic )
 {
-    m_isLogarithmicScale = isLogarithmic;
-    
-    std::cout << std::endl;
-    std::cout << "----------------> CURVE <----------------";
-    std::cout << std::endl;
-    std::cout << "Is logarithmic scale: ";
-    std::cout << std::boolalpha << m_isLogarithmicScale;
-    std::cout << std::endl;
+    m_isLogarithmicScale.store( isLogarithmic );
+}
+
+
+
+void GraphLine::setColour( const juce::Colour &colour )
+{
+    m_colour = colour;
 }
 
 
@@ -37,10 +30,9 @@ void GraphLine::setScaleType( bool isLogarithmic )
 template<class Type>
 float GraphLine::normalizeValue( Type T )
 {
-    if ( T != 0 && m_isLogarithmicScale )
-    {
-        return
-            std::log10f( static_cast<float>( T ) / mr_analyser.getOffset() );
+    if ( T != 0 && m_isLogarithmicScale.load() )
+    {        
+        return std::log10f( static_cast<float>( T ) / mr_analyser.getOffset() );
     }
     else
     {
@@ -53,7 +45,6 @@ float GraphLine::getScopeDataFromAnalyser( size_t index )
 {
     return mr_analyser.getScopeData( index );
 }
-
 
 
 // ============================================================================
@@ -71,7 +62,9 @@ void GraphLine::drawFrame( juce::Graphics &g )
             0.0f,
             1.0f,
             height,
-            0.0f ) );
+            0.0f
+        )
+    );
     
     for ( int x { 1 }; x < mr_analyser.getScopeSize(); ++x )
     {
@@ -83,14 +76,16 @@ void GraphLine::drawFrame( juce::Graphics &g )
                     0.0f,
                     normalizeValue( mr_analyser.getScopeSize() - 1 ),
                     0.0f,
-                    width ),
+                    width
+                ),
                 // Next point of the line along the ordinate axis
                 juce::jmap(
                     getScopeDataFromAnalyser( x ),
                     0.0f,
                     1.0f,
                     height,
-                    0.0f )
+                    0.0f
+                )
             } );
     }
     

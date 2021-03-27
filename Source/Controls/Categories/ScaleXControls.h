@@ -1,8 +1,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../Visualizer/Layers/Graph.h"
-#include "../../Visualizer/Layers/Grid.h"
 
 // ****************************************************************************
 // SCALE X CONTROLS CLASS
@@ -10,29 +8,29 @@
 class ScaleXControls : public juce::Component
 {
 public:
-    enum RadioButtonIds
-    {
-        e_ScaleTypeButtons = 1002
-    };
+    enum RadioButtonIds { scale = 1002 };
     
     
     // ========================================================================
-    ScaleXControls( Graph &c, Grid &g );
+    ScaleXControls( juce::AudioProcessorValueTreeState & );
     ~ScaleXControls() override;
     
     
     // ========================================================================
-    void paint( juce::Graphics &g ) override;
     void resized() override;
 
 private:
     // ========================================================================
-    Graph &mr_graph;
-    Grid &mr_grid;
+    juce::AudioProcessorValueTreeState &mr_audioProcessorValueTreeState;
     
-    juce::TextButton m_linTextButton;
-    juce::TextButton m_logTextButton;
-    juce::TextButton m_stTextButton;
+    juce::TextButton m_linearModeTextButton;
+    juce::TextButton m_logarithmicModeTextButton;
+    juce::TextButton m_stModeTextButton;
+    
+    using Attachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
+    std::unique_ptr<Attachment> m_linTextButtonAttachment;
+    std::unique_ptr<Attachment> m_logTextButtonAttachment;
+    std::unique_ptr<Attachment> m_stTextButtonAttachment;
     
     
     // ========================================================================

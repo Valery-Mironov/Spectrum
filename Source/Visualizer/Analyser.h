@@ -5,79 +5,99 @@
 /*
     TASKS
     
-    Speed up calculations for large "Block" values
-    Correct volumes when switching "Channel"
     Setting "Avg" by the nearest 1-8 volume values
-    Automatic calculation of volume limiters for "Auto" mode in "Scale Y"
-    Manual setting of limiters via the "Scale Y" sliders
 */
+
+using ValueTree = juce::AudioProcessorValueTreeState;
 
 // ****************************************************************************
 // ANALYSER CLASS
 // ****************************************************************************
-class Analyser
+class Analyser : public ValueTree::Listener
 {
 public:
-    Analyser();
+    Analyser( ValueTree & );
     
     
     // ========================================================================
-    void setChannels( int selectedChannels );
+    void resetScopeMaximumsData();
     
     
     // ========================================================================
-    void setFFTBlockSize( size_t newFFTOrder );
-    
-    
-    // ========================================================================
+    void setNextFFTBlockStatus( const bool );
     bool getNextFFTBlockStatus();
-    void setNextFFTBlockStatus( const bool nextFFTBlockStatus );
     
     
     // ========================================================================
     size_t getScopeSize();
-    float getScopeData( size_t index );
-    float getScopeMaximumsData( size_t index );
-    void resetScopeMaximumsData();
+    float getScopeData( size_t );
+    float getScopeMaximumsData( size_t );
+    float getcurrentMaximumInDecibels();
     float getOffset();
     
     
     // ========================================================================
-    void setVolumeScaleDynamicRange( bool isDynamamic );
-    void setVolumeRangeInDecibels( float minimum, float maximum );
-    
-    
-    // ========================================================================
-    void pushNextSampleIntoFifo(
-        float leftChannelSample,
-        float rightChannelSample ) noexcept;
-    void drawNextFrameOfSpectrum();
+    void pushSamplesIntoFifo( float, float ) noexcept;
+    void calculateNextFrameOfSpectrum();
     
 private:
     // ========================================================================
+    void processFFT();
+    void calculateDynamicVolumes();
     void calculateMaximumVolumes();
+    void calculateMinimumVolume();
+    float adaptData( float );
     
     
     // ========================================================================
-    int m_channels;
+    void parameterChanged( const juce::String &, float ) override;
     
-    bool m_blockSizeDefined;
-    bool m_nextFFTBlockReady;
-    bool m_volumeScaleRangeIsDynamamic;
+    
+    // ========================================================================
+    void setFFTBlockSize( int );
+    void setActiveChannel( int );
+    void setVolumeScaleModeAsDynamic( bool );
+    void setVolumeRangeInDecibels( float, float );
+    
+    
+    // ========================================================================
+    enum Channel { e_left = 0, e_right, e_leftPlusRight };
+    
+    ValueTree &mr_valueTree;
+    
+    bool m_blockSizeDefined { false };
+    bool m_nextFFTBlockReady { false };
+    bool m_volumeRangeIsDynamamic { false };
+    bool m_frequencyIsLogarithmic { true };
     
     size_t m_fftOrder;
     size_t m_fftSize;
     size_t m_scopeSize;
     size_t m_fifoIndex;
     
+    juce::dsp::FFT m_forwardFFT_11;
+    juce::dsp::FFT m_forwardFFT_12;
+    juce::dsp::FFT m_forwardFFT_13;
+    juce::dsp::FFT m_forwardFFT_14;
+    
+    juce::dsp::WindowingFunction<float> m_window_2048;
+    juce::dsp::WindowingFunction<float> m_window_4096;
+    juce::dsp::WindowingFunction<float> m_window_8192;
+    juce::dsp::WindowingFunction<float> m_window_16384;
+    
     std::vector<float> m_fifo;
     std::vector<float> m_fftData;
-    std::vector<float> m_scopeData;
-    std::vector<float> m_scopeMaximumsData;
+    std::vector<float> m_volumsDynamicData;
+    std::vector<float> m_volumsMaximumData;
+    std::vector<float> m_scopeDynamicData;
+    std::vector<float> m_scopeMaximumData;
     
     float m_offset;
-    float m_maximumVolumeInDecibels;
-    float m_minimumVolumeInDecibels;
+    float m_maximumVolumeInDecibels { 12 };
+    float m_minimumVolumeInDecibels { -120 };
+    float m_currentMaximumVolumeInDecibels;
+    float m_currentMinimumVolumeInDecibels;
+    int m_activeChannel { e_leftPlusRight };
     
     
     // ========================================================================

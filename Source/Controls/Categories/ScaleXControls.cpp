@@ -1,45 +1,53 @@
 #include "ScaleXControls.h"
 
-ScaleXControls::ScaleXControls( Graph &graph, Grid &grid) :
-    mr_graph( graph ),
-    mr_grid( grid )
+ScaleXControls::ScaleXControls(
+    juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
+) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
 {
-    addAndMakeVisible( m_linTextButton );
-    m_linTextButton.setButtonText( "Lin" );
-    m_linTextButton.setClickingTogglesState( true );
-    m_linTextButton.setRadioGroupId( e_ScaleTypeButtons );
-    m_linTextButton.onClick = [ this ] { mr_graph.setScaleType( false ); };
+    addAndMakeVisible( m_linearModeTextButton );
+    m_linearModeTextButton.setButtonText( "Lin" );
+    m_linearModeTextButton.setClickingTogglesState( true );
+    m_linearModeTextButton.setRadioGroupId( scale );
     
-    addAndMakeVisible( m_logTextButton );
-    m_logTextButton.setButtonText( "Log" );
-    m_logTextButton.setClickingTogglesState( true );
-    m_logTextButton.setRadioGroupId( e_ScaleTypeButtons );
-    m_logTextButton.onClick = [ this ] { mr_graph.setScaleType( true ); };
-    m_logTextButton.setToggleState( true, juce::dontSendNotification );
+    m_linTextButtonAttachment =
+        std::make_unique<Attachment>(
+            mr_audioProcessorValueTreeState,
+            "LIN_ID",
+            m_linearModeTextButton
+        );
     
-    addAndMakeVisible( m_stTextButton );
-    m_stTextButton.setButtonText( "ST" );
-    m_stTextButton.setClickingTogglesState( true );
-    m_stTextButton.setRadioGroupId( e_ScaleTypeButtons );
-    m_logTextButton.onClick = [ this ] { mr_graph.setScaleType( true ); };
+    addAndMakeVisible( m_logarithmicModeTextButton );
+    m_logarithmicModeTextButton.setButtonText( "Log" );
+    m_logarithmicModeTextButton.setClickingTogglesState( true );
+    m_logarithmicModeTextButton.setRadioGroupId( scale );
+    m_logarithmicModeTextButton.setToggleState( true, juce::dontSendNotification );
+    
+    m_logTextButtonAttachment =
+        std::make_unique<Attachment>(
+            mr_audioProcessorValueTreeState,
+            "LOG_ID",
+            m_logarithmicModeTextButton
+        );
+    
+    addAndMakeVisible( m_stModeTextButton );
+    m_stModeTextButton.setButtonText( "ST" );
+    m_stModeTextButton.setClickingTogglesState( true );
+    m_stModeTextButton.setRadioGroupId( scale );
+    
+    m_stTextButtonAttachment =
+        std::make_unique<Attachment>(
+            mr_audioProcessorValueTreeState,
+            "ST_ID",
+            m_stModeTextButton
+        );
 }
 
 
 
-ScaleXControls::~ScaleXControls()
-{
-    
-}
+ScaleXControls::~ScaleXControls() {}
 
 
 // ============================================================================
-void ScaleXControls::paint( juce::Graphics &g )
-{
-    
-}
-
-
-
 void ScaleXControls::resized()
 {
     auto indent { 3 };
@@ -49,11 +57,11 @@ void ScaleXControls::resized()
         ( area.getWidth() - indent * 2 ) / 3
     };
     
-    m_linTextButton.setBounds( area.removeFromLeft( buttonWidth ) );
+    m_linearModeTextButton.setBounds( area.removeFromLeft( buttonWidth ) );
     area.removeFromLeft( indent );
     
-    m_stTextButton.setBounds( area.removeFromRight( buttonWidth ) );
+    m_stModeTextButton.setBounds( area.removeFromRight( buttonWidth ) );
     area.removeFromRight( indent );
     
-    m_logTextButton.setBounds( area );
+    m_logarithmicModeTextButton.setBounds( area );
 }

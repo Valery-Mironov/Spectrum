@@ -3,37 +3,28 @@
 // ****************************************************************************
 // AVG CONTROL CLASS
 // ****************************************************************************
-AvgControl::AvgControl()
+AvgControl::AvgControl(
+    juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
+) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
 {
     addAndMakeVisible( m_avgSlider );
-    m_avgSlider.setSliderStyle(
-        juce::Slider::SliderStyle::LinearBar );
-    m_avgSlider.setRange( 1, 8, 1 );
-    m_avgSlider.setValue( 1, juce::dontSendNotification );
-    m_avgSlider.setTextBoxStyle(
-        juce::Slider::TextEntryBoxPosition::TextBoxLeft,
-        false,
-        50,
-        20 );
-}
-
-
-
-AvgControl::~AvgControl()
-{
+    m_avgSlider.setSliderStyle( juce::Slider::SliderStyle::LinearBar );
     
+    m_avgSliderAttachment =
+        std::make_unique<Attachment>(
+            mr_audioProcessorValueTreeState,
+            "AVG_ID",
+            m_avgSlider
+        );
 }
+
+
+
+AvgControl::~AvgControl() {}
 
 
 // ============================================================================
-void AvgControl::paint( juce::Graphics &g )
-{
-    m_avgSlider.setBounds( getLocalBounds() );
-}
-
-
-
 void AvgControl::resized()
 {
-    
+    m_avgSlider.setBounds( getLocalBounds() );
 }

@@ -1,17 +1,12 @@
 #include "GraphMaximumsLine.h"
 
 GraphMaximumsLine::GraphMaximumsLine(
-    Analyser &analyser ) : GraphLine::GraphLine( analyser )
-{
-    
-}
+    Analyser &analyser
+) : GraphLine::GraphLine( analyser ) {}
 
 
 
-GraphMaximumsLine::~GraphMaximumsLine()
-{
-    
-}
+GraphMaximumsLine::~GraphMaximumsLine() {}
 
 
 // ============================================================================

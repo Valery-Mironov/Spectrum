@@ -10,12 +10,12 @@
 class GraphMaximumsLine : public GraphLine
 {
 public:
-    GraphMaximumsLine( Analyser &analyser );
+    GraphMaximumsLine( Analyser & );
     ~GraphMaximumsLine() override;
     
 private:
     // ========================================================================
-    float getScopeDataFromAnalyser( size_t index ) override;
+    float getScopeDataFromAnalyser( size_t ) override;
     
     
     // ========================================================================

@@ -1,15 +1,18 @@
 #include "PluginEditor.h"
 
 SpectrumAudioProcessorEditor::SpectrumAudioProcessorEditor(
-    SpectrumAudioProcessor &p,
-    Analyser &a ) :
-        AudioProcessorEditor( &p ),
-        mr_audioProcessor( p ),
-        m_visualizer( a ),
-        m_controls( a, m_visualizer.getReferenceToTheCurve(), m_visualizer.getReferenceToTheGrid() )
+    SpectrumAudioProcessor &audioProcessor,
+    juce::AudioProcessorValueTreeState &audioProcessorValueTreeState,
+    Analyser &analyser
+) : AudioProcessorEditor( &audioProcessor ),
+    mr_audioProcessor( audioProcessor ),
+    m_visualizer( audioProcessorValueTreeState, analyser ),
+    m_controls( audioProcessorValueTreeState )
 {
     addAndMakeVisible( m_visualizer );
+    
     addAndMakeVisible( m_controls );
+    m_controls.setMarginInPixels( m_marginInPixels );
     
     setResizable( true, true );
     setSize( 600, 240 );
@@ -17,10 +20,7 @@ SpectrumAudioProcessorEditor::SpectrumAudioProcessorEditor(
 
 
 
-SpectrumAudioProcessorEditor::~SpectrumAudioProcessorEditor()
-{
-    
-}
+SpectrumAudioProcessorEditor::~SpectrumAudioProcessorEditor() {}
 
 
 // ============================================================================
@@ -33,11 +33,8 @@ void SpectrumAudioProcessorEditor::paint( juce::Graphics &g )
 
 void SpectrumAudioProcessorEditor::resized()
 {
-    // Найти более изящное решение для указания минимальных размеров окна
-    if ( getWidth() < 600 || getHeight() < 240 )
-    {
-        setSize( 600, 240 );
-    }
+    if ( getWidth() < 600 ) { setSize( 600, getHeight() ); }
+    if ( getHeight() < 240 ) { setSize( getWidth(), 240 ); }
     
     auto area = getLocalBounds().reduced( m_marginInPixels );
     

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../Visualizer/Analyser.h"
 
 // ****************************************************************************
 // BLOCK CONTROL CLASS
@@ -9,19 +8,20 @@
 class BlockControl : public juce::Component
 {
 public:
-    BlockControl( Analyser &a );
+    BlockControl( juce::AudioProcessorValueTreeState & );
     ~BlockControl() override;
     
     
     // ========================================================================
-    void paint( juce::Graphics &g ) override;
     void resized() override;
 
 private:
     // ========================================================================
-    Analyser &mr_analyser;
-    
+    juce::AudioProcessorValueTreeState &mr_audioProcessorValueTreeState;
     juce::ComboBox m_blockComboBox;
+    
+    using Attachment = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
+    std::unique_ptr<Attachment> m_blockComboBoxAttachment;
     
     
     // ========================================================================

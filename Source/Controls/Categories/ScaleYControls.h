@@ -1,7 +1,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../Visualizer/Analyser.h"
 
 // ****************************************************************************
 // SCALE Y CONTROLS CLASS
@@ -9,21 +8,27 @@
 class ScaleYControls : public juce::Component
 {
 public:
-    ScaleYControls( Analyser &a );
+    ScaleYControls( juce::AudioProcessorValueTreeState & );
     ~ScaleYControls() override;
     
     
     // ========================================================================
-    void paint( juce::Graphics &g ) override;
     void resized() override;
 
 private:
     // ========================================================================
-    Analyser &mr_analyser;
+    juce::AudioProcessorValueTreeState &mr_audioProcessorValueTreeState;
     
-    juce::TextButton m_rangeTextButton;
+    juce::TextButton m_rangeModeTextButton;
     juce::Slider m_maximumVolumeSlider;
     juce::Slider m_minimumVolumeSlider;
+    
+    using ButtonAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
+    std::unique_ptr<ButtonAttachment> m_rangeTextButtonAttachment;
+    
+    using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
+    std::unique_ptr<SliderAttachment> m_maximumVolumeSliderAttachment;
+    std::unique_ptr<SliderAttachment> m_minimumVolumeSliderAttachment;
     
     
     // ========================================================================

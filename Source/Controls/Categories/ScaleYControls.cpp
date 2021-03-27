@@ -1,93 +1,70 @@
 #include "ScaleYControls.h"
 
-ScaleYControls::ScaleYControls( Analyser &a ) :
-    mr_analyser( a )
+ScaleYControls::ScaleYControls(
+    juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
+) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
 {
-    addAndMakeVisible( m_rangeTextButton );
-    m_rangeTextButton.setButtonText( "Range" );
-    m_rangeTextButton.setClickingTogglesState( true );
-    m_rangeTextButton.setToggleState( true, juce::dontSendNotification );
-    m_rangeTextButton.onClick = [ this ]
+    addAndMakeVisible( m_rangeModeTextButton );
+    m_rangeModeTextButton.setButtonText( "Range" );
+    m_rangeModeTextButton.setClickingTogglesState( true );
+    m_rangeModeTextButton.onClick = [ this ]
     {
-        if ( m_rangeTextButton.getToggleState() == true )
+        if ( m_rangeModeTextButton.getToggleState() == true )
         {
-            m_rangeTextButton.setButtonText( "Range" );
+            m_rangeModeTextButton.setButtonText( "Range" );
             m_maximumVolumeSlider.setEnabled( true );
             m_minimumVolumeSlider.setEnabled( true );
-            mr_analyser.setVolumeScaleDynamicRange( false );
         }
         else
         {
-            m_rangeTextButton.setButtonText( "Auto" );
+            m_rangeModeTextButton.setButtonText( "Auto" );
             m_maximumVolumeSlider.setEnabled( false );
             m_minimumVolumeSlider.setEnabled( false );
-            mr_analyser.setVolumeScaleDynamicRange( true );
         }
     };
     
+    m_rangeTextButtonAttachment =
+        std::make_unique<ButtonAttachment>(
+            mr_audioProcessorValueTreeState,
+            "RANGE_ID",
+            m_rangeModeTextButton
+        );
+    
     addAndMakeVisible( m_maximumVolumeSlider );
-    m_maximumVolumeSlider.setSliderStyle(
-        juce::Slider::SliderStyle::LinearBar );
-    m_maximumVolumeSlider.setNumDecimalPlacesToDisplay( 0 );
-    m_maximumVolumeSlider.setRange( -200, 40, 1 );
-    m_maximumVolumeSlider.setValue( 12, juce::dontSendNotification );
-    m_maximumVolumeSlider.setTextBoxStyle(
-        juce::Slider::TextEntryBoxPosition::TextBoxLeft,
-        false,
-        50,
-        20 );
+    m_maximumVolumeSlider.setSliderStyle( juce::Slider::LinearBar );
     m_maximumVolumeSlider.onValueChange = [ this ]
     {
         auto maximumVolume { m_maximumVolumeSlider.getValue() };
         m_minimumVolumeSlider.setRange(
             maximumVolume - 180,
             maximumVolume - 10,
-            1 );
-        
-        auto minimumVolume { m_minimumVolumeSlider.getValue() };
-        
-        mr_analyser.setVolumeRangeInDecibels(
-            static_cast<float>( minimumVolume ),
-            static_cast<float>( maximumVolume ) );
+            1
+        );
     };
+    
+    m_maximumVolumeSliderAttachment =
+        std::make_unique<SliderAttachment>(
+            mr_audioProcessorValueTreeState,
+            "MAXIMUM_ID",
+            m_maximumVolumeSlider
+        );
     
     addAndMakeVisible( m_minimumVolumeSlider );
-    m_minimumVolumeSlider.setSliderStyle(
-        juce::Slider::SliderStyle::LinearBar );
-    m_minimumVolumeSlider.setNumDecimalPlacesToDisplay( 0 );
-    m_minimumVolumeSlider.setRange( -380, 30, 1 );
-    m_minimumVolumeSlider.setValue( -120, juce::dontSendNotification );
-    m_minimumVolumeSlider.setTextBoxStyle(
-        juce::Slider::TextEntryBoxPosition::TextBoxLeft,
-        false,
-        50,
-        20 );
-    m_minimumVolumeSlider.onValueChange = [ this ]
-    {
-        auto minimumVolume { m_minimumVolumeSlider.getValue() };
-        auto maximumVolume { m_maximumVolumeSlider.getValue() };
-        mr_analyser.setVolumeRangeInDecibels(
-            static_cast<float>( minimumVolume ),
-            static_cast<float>( maximumVolume ) );
-    };
-}
-
-
-
-ScaleYControls::~ScaleYControls()
-{
+    m_minimumVolumeSlider.setSliderStyle( juce::Slider::LinearBar );
     
+    m_minimumVolumeSliderAttachment =
+        std::make_unique<SliderAttachment>(
+            mr_audioProcessorValueTreeState,
+            "MINIMUM_ID",
+            m_minimumVolumeSlider
+        );
 }
+
+
+ScaleYControls::~ScaleYControls() {}
 
 
 // ============================================================================
-void ScaleYControls::paint( juce::Graphics &g )
-{
-    
-}
-
-
-
 void ScaleYControls::resized()
 {
     auto indent { 3 };
@@ -97,7 +74,7 @@ void ScaleYControls::resized()
         ( area.getWidth() - indent * 2 ) / 3
     };
     
-    m_rangeTextButton.setBounds( area.removeFromLeft( buttonWidth ) );
+    m_rangeModeTextButton.setBounds( area.removeFromLeft( buttonWidth ) );
     area.removeFromLeft( indent );
     
     m_minimumVolumeSlider.setBounds( area.removeFromRight( buttonWidth ) );

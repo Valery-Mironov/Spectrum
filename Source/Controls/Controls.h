@@ -1,9 +1,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../Visualizer/Analyser.h"
-#include "../Visualizer/Layers/Graph.h"
-#include "../Visualizer/Layers/Grid.h"
 #include "Categories/BlockControl.h"
 #include "Categories/ChannelControls.h"
 #include "Categories/RefreshControl.h"
@@ -12,6 +9,13 @@
 #include "Categories/ScaleXControls.h"
 #include "Categories/ScaleYControls.h"
 
+/*
+    TASKS
+
+    Add separators
+    Configure the correct display of elements
+*/
+
 // ****************************************************************************
 // CONTROLS CLASS
 // ****************************************************************************
@@ -19,13 +23,15 @@ class Controls : public juce::Component
 {
 public:
     // ========================================================================
-    Controls( Analyser &a, Graph &c, Grid &g );
-    ~Controls() override;
+    Controls( juce::AudioProcessorValueTreeState & );
     
     
     // ========================================================================
-    void paint( juce::Graphics &g ) override;
     void resized() override;
+    
+    
+    // ========================================================================
+    void setMarginInPixels( int );
     
 private:
     // ========================================================================
@@ -45,8 +51,7 @@ private:
     ScaleXControls m_scaleXControls;
     ScaleYControls m_scaleYControls;
     
-    // Must be set by the 'set' method
-    static constexpr int m_marginInPixels { 10 };
+    int m_marginInPixels { 10 };
     
     
     // ========================================================================

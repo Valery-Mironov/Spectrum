@@ -1,62 +1,49 @@
 #include "GraphControls.h"
 
-GraphControls::GraphControls( Graph &c ) : mr_curve( c )
+GraphControls::GraphControls(
+    juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
+) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
 {
-    addAndMakeVisible( m_lineTextButon );
-    m_lineTextButon.setButtonText( "Line" );
-    m_lineTextButon.setClickingTogglesState( true );
-    m_lineTextButon.setToggleState(
-        false,
-        juce::dontSendNotification );
-    m_lineTextButon.onClick = [ this ]
+    addAndMakeVisible( m_lineTextButton );
+    m_lineTextButton.setButtonText( "Line" );
+    m_lineTextButton.setClickingTogglesState( true );
+    m_lineTextButton.onClick = [ this ]
     {
-        if ( m_lineTextButon.getToggleState() == true )
+        if ( m_lineTextButton.getToggleState() == true )
         {
-            m_lineTextButon.setButtonText( "Bins" );
-            mr_curve.setGraphStyleAsBins( true );
+            m_lineTextButton.setButtonText( "Line" );
         }
         else
         {
-            m_lineTextButon.setButtonText( "Line" );
-            mr_curve.setGraphStyleAsBins( false );
+            m_lineTextButton.setButtonText( "Bins" );
         }
     };
+    
+    m_lineTextButtonAttachment =
+        std::make_unique<Attachment>(
+            mr_audioProcessorValueTreeState,
+            "BINS_ID",
+            m_lineTextButton
+        );
     
     addAndMakeVisible( m_maxTextButton );
     m_maxTextButton.setButtonText( "Max" );
     m_maxTextButton.setClickingTogglesState( true );
-    m_maxTextButton.setToggleState(
-        true,
-        juce::dontSendNotification );
-    m_maxTextButton.onClick = [ this ]
-    {
-        if ( m_maxTextButton.getToggleState() == true )
-        {
-            mr_curve.maximumVolumesAreShown( true );
-        }
-        else
-        {
-            mr_curve.maximumVolumesAreShown( false );
-        }
-    };
-}
-
-
-
-GraphControls::~GraphControls()
-{
     
+    m_maxTextButtonAttachment =
+        std::make_unique<Attachment>(
+            mr_audioProcessorValueTreeState,
+            "MAX_ID",
+            m_maxTextButton
+        );
 }
+
+
+
+GraphControls::~GraphControls() {}
 
 
 // ============================================================================
-void GraphControls::paint( juce::Graphics &g )
-{
-    
-}
-
-
-
 void GraphControls::resized()
 {
     auto indent { 3 };
@@ -66,6 +53,6 @@ void GraphControls::resized()
         ( area.getWidth() - indent ) / 2
     };
     
-    m_lineTextButon.setBounds( area.removeFromLeft( buttonWidth ) );
+    m_lineTextButton.setBounds( area.removeFromLeft( buttonWidth ) );
     m_maxTextButton.setBounds( area.removeFromRight( buttonWidth ) );
 }

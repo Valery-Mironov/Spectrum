@@ -1,68 +1,63 @@
 #include "ChannelControls.h"
 
-ChannelControls::ChannelControls( Analyser &a ) : mr_analyser( a )
-{
-    addAndMakeVisible( m_leftTextButton );
-    m_leftTextButton.setButtonText( "L" );
-    m_leftTextButton.setClickingTogglesState( true );
-    m_leftTextButton.setRadioGroupId( e_ChannelsButtons );
-    m_leftTextButton.onClick = [ this ]
-    {
-        mr_analyser.setChannels( e_Left );
-    };
-
-    addAndMakeVisible( m_rightTextButton );
-    m_rightTextButton.setButtonText( "R" );
-    m_rightTextButton.setClickingTogglesState( true );
-    m_rightTextButton.setRadioGroupId( e_ChannelsButtons );
-    m_rightTextButton.onClick = [ this ]
-    {
-        mr_analyser.setChannels( e_Right );
-    };
+ChannelControls::ChannelControls(
+    juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
+) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
+{    
+    addAndMakeVisible( m_leftChannelTextButton );
+    m_leftChannelTextButton.setButtonText( "Left" );
+    m_leftChannelTextButton.setClickingTogglesState( true );
+    m_leftChannelTextButton.setRadioGroupId( channels );
     
-    addAndMakeVisible( m_leftPlusRightTextButton );
-    m_leftPlusRightTextButton.setButtonText( "L + R" );
-    m_leftPlusRightTextButton.setClickingTogglesState( true );
-    m_leftPlusRightTextButton.setRadioGroupId( e_ChannelsButtons );
-    m_leftPlusRightTextButton.onClick = [ this ]
-    {
-        mr_analyser.setChannels( e_LeftPlusRight );
-    };
-    m_leftPlusRightTextButton.setToggleState(
-        true,
-        juce::dontSendNotification );
+    m_leftChannelTextButtonAttachment =
+        std::make_unique<Attachment>(
+            mr_audioProcessorValueTreeState,
+            "LEFT_ID",
+            m_leftChannelTextButton
+        );
+    
+    addAndMakeVisible( m_rightChannelTextButton );
+    m_rightChannelTextButton.setButtonText( "Right" );
+    m_rightChannelTextButton.setClickingTogglesState( true );
+    m_rightChannelTextButton.setRadioGroupId( channels );
+    
+    m_rightChannelTextButtonAttachment =
+        std::make_unique<Attachment>(
+            mr_audioProcessorValueTreeState,
+            "RIGHT_ID",
+            m_rightChannelTextButton
+        );
+    
+    addAndMakeVisible( m_bothChannelsTextButton );
+    m_bothChannelsTextButton.setButtonText( "Both" );
+    m_bothChannelsTextButton.setClickingTogglesState( true );
+    m_bothChannelsTextButton.setRadioGroupId( channels );
+    
+    m_bothChannelsButtonAttachment =
+        std::make_unique<Attachment>(
+            mr_audioProcessorValueTreeState,
+            "BOTH_ID",
+            m_bothChannelsTextButton
+        );
 }
 
 
 
-ChannelControls::~ChannelControls()
-{
-    
-}
+ChannelControls::~ChannelControls() {}
 
 
 // ============================================================================
-void ChannelControls::paint( juce::Graphics &g )
-{
-    
-}
-
-
-
 void ChannelControls::resized()
 {
     auto indent { 3 };
     auto area { getLocalBounds() };
-    auto buttonWidth
-    {
-        ( area.getWidth() - indent * 2 ) / 3
-    };
+    auto buttonWidth { ( area.getWidth() - indent * 2 ) / 3 };
     
-    m_leftTextButton.setBounds( area.removeFromLeft( buttonWidth ) );
+    m_leftChannelTextButton.setBounds( area.removeFromLeft( buttonWidth ) );
     area.removeFromLeft( indent );
     
-    m_leftPlusRightTextButton.setBounds( area.removeFromRight( buttonWidth ) );
+    m_bothChannelsTextButton.setBounds( area.removeFromRight( buttonWidth ) );
     area.removeFromRight( indent );
     
-    m_rightTextButton.setBounds( area );
+    m_rightChannelTextButton.setBounds( area );
 }

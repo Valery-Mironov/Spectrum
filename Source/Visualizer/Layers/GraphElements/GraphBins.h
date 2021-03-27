@@ -9,12 +9,12 @@
 class GraphBins : public GraphLine
 {
 public:
-    GraphBins( Analyser &analyser );
+    GraphBins( Analyser & );
     ~GraphBins();
     
 private:
     // ========================================================================
-    void drawFrame( juce::Graphics &g ) override;
+    void drawFrame( juce::Graphics & ) override;
     
     
     // ========================================================================

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../Visualizer/Analyser.h"
 
 // ****************************************************************************
 // CHANNEL CONTROLS CLASS
@@ -9,37 +8,30 @@
 class ChannelControls : public juce::Component
 {
 public:
-    enum RadioButtonIds
-    {
-        e_ChannelsButtons = 1001
-    };
-    
-    
-    
-    enum SelectedChannels
-    {
-        e_Left,
-        e_Right,
-        e_LeftPlusRight
-    };
+    enum RadioButtonIds { channels = 1001 };
     
     
     // ========================================================================
-    ChannelControls( Analyser &a );
+    ChannelControls( juce::AudioProcessorValueTreeState & );
     ~ChannelControls() override;
     
     
     // ========================================================================
-    void paint( juce::Graphics &g ) override;
     void resized() override;
 
 private:
     // ========================================================================
-    Analyser &mr_analyser;
+    juce::AudioProcessorValueTreeState &mr_audioProcessorValueTreeState;
     
-    juce::TextButton m_leftTextButton;
-    juce::TextButton m_rightTextButton;
-    juce::TextButton m_leftPlusRightTextButton;
+    juce::TextButton m_leftChannelTextButton;
+    juce::TextButton m_rightChannelTextButton;
+    juce::TextButton m_bothChannelsTextButton;
+    
+    using Attachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
+    
+    std::unique_ptr<Attachment> m_leftChannelTextButtonAttachment;
+    std::unique_ptr<Attachment> m_rightChannelTextButtonAttachment;
+    std::unique_ptr<Attachment> m_bothChannelsButtonAttachment;
     
     
     // ========================================================================

@@ -1,16 +1,7 @@
 #include "GraphBins.h"
 
-GraphBins::GraphBins( Analyser &analyser ) : GraphLine::GraphLine( analyser )
-{
-    
-}
-
-
-
-GraphBins::~GraphBins()
-{
-    
-}
+GraphBins::GraphBins( Analyser &analyser ) : GraphLine::GraphLine( analyser ) {}
+GraphBins::~GraphBins() {}
 
 // ============================================================================
 void GraphBins::drawFrame( juce::Graphics &g )
@@ -26,7 +17,8 @@ void GraphBins::drawFrame( juce::Graphics &g )
                 0.0f,
                 normalizeValue( mr_analyser.getScopeSize() - 1 ),
                 0.0f,
-                width );
+                width
+            );
                 
         g.drawLine(
             xPosition,
@@ -35,9 +27,11 @@ void GraphBins::drawFrame( juce::Graphics &g )
                 1.0f,
                 0.0f,
                 0.0f,
-                height ),
+                height
+            ),
             xPosition,
             height,
-            1.0f );
+            1.0f
+        );
     }
 }

@@ -1,242 +1,261 @@
 #include "Grid.h"
 
 Grid::Grid(
-    const int minimumFrequencyInHertz,
-    const int maximumFrequencyInHertz,
-    const int minimumVolumeInDecibels,
-    const int maximumVolumeInDecibels ) :
-        m_maximumVolumeInDecibels( maximumVolumeInDecibels ),
-        m_minimumVolumeInDecibels( minimumVolumeInDecibels )
+    juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
+) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
 {
-    calculateBaseTenLogarithm(
-        minimumFrequencyInHertz,
-        maximumFrequencyInHertz );
-    addLabels();
+    addChildComponent( m_logarithmicScale );
+    addChildComponent( m_linearScale );
+    addChildComponent( m_noteScale );
+        
+    mr_audioProcessorValueTreeState.addParameterListener( "LIN_ID", this );
+    mr_audioProcessorValueTreeState.addParameterListener( "LOG_ID", this );
+    mr_audioProcessorValueTreeState.addParameterListener( "ST_ID", this );
+    mr_audioProcessorValueTreeState.addParameterListener( "MAXIMUM_ID", this );
+    mr_audioProcessorValueTreeState.addParameterListener( "MINIMUM_ID", this );
 }
 
 
 
-Grid::~Grid()
-{
-    
-}
+Grid::~Grid() {}
 
 
 // ===========================================================================
 void Grid::paint( juce::Graphics &g )
 {
     g.setColour( m_gridColour );
+    g.drawRect( getLocalBounds() );
     
-    for ( auto y : m_volumeGridPoints )
+    calculateAmplitudeGrid();
+    addLabels();
+        
+    for ( const auto y : m_volumeGridPoints )
     {
         g.drawLine(
-            0,
+            0.0f,
             y,
-            getWidth(),
-            y );
+            static_cast<float>( getWidth() ),
+            y
+        );
     }
     
-    for ( const auto &[ frequency, x ] : m_frequencyGridPoints )
-    {
-        g.drawLine(
-            x,
-            0,
-            x,
-            getHeight() );
-    }
-    
-    for ( const auto &[ frequency, label ] : m_labels )
+    for ( const auto &[ volume, label ] : m_labels )
     {
         label->setBounds(
-            m_frequencyGridPoints[ frequency ] - 14,
-            1,
-            28,
-            20 );
+            0.0f,
+            juce::jmap(
+                static_cast<float>( volume ),
+                static_cast<float>( m_maximumVolumeInDecibels.load() ),
+                static_cast<float>( m_minimumVolumeInDecibels.load() ),
+                0.0f,
+                static_cast<float>( getHeight() )
+            ) - 7.0f,
+            28.0f,
+            20.0f
+        );
     }
+    
+    m_linearScale.setVisible( m_gridStyleIsLinear );
+    m_logarithmicScale.setVisible( m_gridStyleIsLogarithmic );
+    m_noteScale.setVisible( m_gridStyleIsST );
 }
 
 
 
 void Grid::resized()
 {
-    calculateFrequencyGrid();
-    calculateAmplitudeGrid(
-        m_minimumVolumeInDecibels,
-        m_maximumVolumeInDecibels );
+    m_linearScale.setBounds( getLocalBounds() );
+    m_logarithmicScale.setBounds( getLocalBounds() );
+    m_noteScale.setBounds( getLocalBounds() );
+    
+    repaint();
 }
 
 
 // ============================================================================
-void Grid::setMaximumVolumeInDecibels( int volume )
+void Grid::setGridColour( juce::Colour colour )
 {
-    m_minimumVolumeInDecibels = volume;
+    m_gridColour = colour;
 }
 
 
 
-void Grid::setMinimumVolumeInDecibels( int volume )
+void Grid::setTextColour( juce::Colour colour )
 {
-    m_maximumVolumeInDecibels = volume;
+    m_textColour = colour;
 }
 
 
-// ===========================================================================
-int Grid::getOffsetInHertz( const int frequency )
+// ============================================================================
+void Grid::parameterChanged(
+    const juce::String &parameterID,
+    float newValue
+) {
+    if ( parameterID == "LIN_ID" )
+    {
+        setGridStyle( GridStyles::linear );
+    }
+    else if ( parameterID == "LOG_ID" )
+    {
+        setGridStyle( GridStyles::logarithmic );
+    }
+    else if ( parameterID == "ST_ID" )
+    {
+        setGridStyle( GridStyles::st );
+    }
+    else if ( parameterID == "MAXIMUM_ID" || parameterID == "MINIMUM_ID" )
+    {
+        setVolumeRangeInDecibels(
+            static_cast<int>(
+                mr_audioProcessorValueTreeState.getRawParameterValue(
+                    "MAXIMUM_ID"
+                )->load()
+            ),
+            static_cast<int>(
+                mr_audioProcessorValueTreeState.getRawParameterValue(
+                    "MINIMUM_ID"
+                )->load()
+            )
+        );
+    }
+}
+
+
+// ============================================================================
+void Grid::setGridStyle( GridStyles style )
 {
-    auto minimumForDivisions { frequency };
-    auto divisionСounter { 1 };
-    
-    while ( m_coefficient < ( minimumForDivisions / m_coefficient ) ) {
-        minimumForDivisions /= m_coefficient;
-        ++divisionСounter;
+    switch ( style  ) {
+        case GridStyles::linear:
+            m_gridStyleIsLinear = true;
+            m_gridStyleIsLogarithmic = false;
+            m_gridStyleIsST = false;
+            break;
+        case GridStyles::logarithmic:
+            m_gridStyleIsLinear = false;
+            m_gridStyleIsLogarithmic = true;
+            m_gridStyleIsST = false;
+            break;
+        case GridStyles::st:
+            m_gridStyleIsLinear = false;
+            m_gridStyleIsLogarithmic = false;
+            m_gridStyleIsST = true;
+            break;
+        default:
+            DBG( "Error! Unknown grid style." );
+            break;
     }
     
-    return
-        static_cast<int>(
-            pow(
-                static_cast<float>( m_coefficient ),
-                divisionСounter ) );
+    repaint();
 }
 
 
 
-int Grid::getCurrentFrequencyInHertz(
-    const int currentFrequencyInHertz,
-    const int offsetInHertz )
+void Grid::setVolumeRangeInDecibels( int maximum, int minimum )
 {
-    if (
-        currentFrequencyInHertz % offsetInHertz == 0 )
+    if ( maximum - 10 < minimum ) { minimum = maximum - 10; }
+    
+    m_maximumVolumeInDecibels.store( maximum );
+    m_minimumVolumeInDecibels.store( minimum );
+}
+
+
+// ============================================================================
+void Grid::calculateAmplitudeGrid()
+{
+    const auto maximum { m_maximumVolumeInDecibels.load() };
+    const auto minimum { m_minimumVolumeInDecibels.load() };
+    
+    int rangeInDecibels;
+    
+    if ( maximum < 0 )
     {
-        return currentFrequencyInHertz;
+        rangeInDecibels = ( minimum - maximum ) * -1;
+    }
+    else if ( 0 <= minimum )
+    {
+        rangeInDecibels = maximum - minimum;
     }
     else
     {
-        auto newFrequency { currentFrequencyInHertz };
-        newFrequency -= currentFrequencyInHertz % offsetInHertz;
-        return newFrequency + offsetInHertz;
-    }
-}
-
-// ===========================================================================
-void Grid::calculateBaseTenLogarithm(
-    const int minimumFrequencyInHertz,
-    const int maximumFrequencyInHertz )
-{
-    auto offsetInHertz
-    {
-        getOffsetInHertz( minimumFrequencyInHertz )
-    };
-    
-    auto currentFrequencyInHertz
-    {
-        getCurrentFrequencyInHertz( minimumFrequencyInHertz, offsetInHertz )
-    };
-    
-    if ( currentFrequencyInHertz != minimumFrequencyInHertz )
-    {
-        m_baseTenLogarithm[ minimumFrequencyInHertz ] =
-            std::log10f(
-                static_cast<float>(
-                    minimumFrequencyInHertz ) );
-            
+        rangeInDecibels = maximum + minimum * -1;
     }
     
-    while ( currentFrequencyInHertz < maximumFrequencyInHertz )
+    m_offsetInDecibels.store( 0 );
+    auto offset { 0.0f };
+    
+    while ( offset < 16.0f )
     {
-        m_baseTenLogarithm[ currentFrequencyInHertz ] =
-            std::log10f(
-                static_cast<float>(
-                    currentFrequencyInHertz ) );
+        m_offsetInDecibels.store( m_offsetInDecibels.load() + 6 );
         
-        if ( offsetInHertz * m_coefficient == currentFrequencyInHertz )
-        {
-            offsetInHertz *= m_coefficient;
-        }
-        currentFrequencyInHertz += offsetInHertz;
-    }
-    
-    if ( maximumFrequencyInHertz <= currentFrequencyInHertz)
-    {
-        m_baseTenLogarithm[ maximumFrequencyInHertz ] =
-            std::log10f(
-                static_cast<float>(
-                    maximumFrequencyInHertz ) );
-    }
-}
-
-
-
-void Grid::calculateFrequencyGrid()
-{
-    auto sourceRangeMinimum = ( m_baseTenLogarithm.begin() )->second;
-    auto sourceRangeMaximum = ( --m_baseTenLogarithm.end() )->second;
-    
-    auto targetRangeMinimum = 0.0f;
-    auto targetRangeMaximem = static_cast<float>( getWidth() );
-    
-    m_frequencyGridPoints.clear();
-    
-    for ( const auto &[ frequency, value ] : m_baseTenLogarithm )
-    {
-        m_frequencyGridPoints[ frequency ] =
+        offset =
             juce::jmap(
-                value,
-                sourceRangeMinimum,
-                sourceRangeMaximum,
-                targetRangeMinimum,
-                targetRangeMaximem );
+                static_cast<float>( m_offsetInDecibels.load() ),
+                0.0f,
+                static_cast<float>( rangeInDecibels ),
+                0.0f,
+                static_cast<float>( getHeight() )
+            );
     }
-}
-
-
-
-void Grid::calculateAmplitudeGrid(
-    const int miniumInDecibels,
-    const int maximumInDecibels )
-{
-    m_volumeGridPoints.clear();
     
-    auto minimum =
-        miniumInDecibels < 0 ?
-        miniumInDecibels * -1 :
-        miniumInDecibels;
+    m_firstOffsetInDecibels.store( maximum );
     
-    auto maximum =
-        maximumInDecibels < 0 ?
-        maximumInDecibels * -1 :
-        maximumInDecibels;
+    while (
+        m_firstOffsetInDecibels.load() %
+        m_offsetInDecibels.load() !=
+        0
+    ) {
+        m_firstOffsetInDecibels.store( m_firstOffsetInDecibels.load() - 1 );
+    }
     
-    auto rangeInDecibels = minimum + maximum;
-    auto verticalSpace = getHeight() / ( rangeInDecibels / m_stepInDecibels );
-    
-    for ( auto i = 0; i < getHeight(); i += verticalSpace )
+    const auto first
     {
-        m_volumeGridPoints.push_back( i );
+        juce::jmap(
+            static_cast<float>( m_firstOffsetInDecibels.load() ),
+            static_cast<float>( maximum ),
+            static_cast<float>( minimum ),
+            0.0f,
+            static_cast<float>( getHeight() )
+        )
+    };
+    
+    const auto height { static_cast<float>( getHeight() ) };
+    m_volumeGridPoints.clear();
+        
+    for ( auto position { first }; position < height; position += offset )
+    {
+        m_volumeGridPoints.push_back( position );
     }
-    m_volumeGridPoints.push_back( getHeight() );
 }
 
 
 
 void Grid::addLabels()
 {
-    for ( auto frequency = 100; frequency <= 10000; frequency *= 10 )
+    auto volume { m_firstOffsetInDecibels.load() };
+    const auto offset { m_offsetInDecibels.load() };
+    const auto minimum { m_minimumVolumeInDecibels.load() };
+    
+    m_labels.clear();
+    
+    while ( minimum < volume - offset )
     {
+        volume -= offset;
         m_labels.insert(
             std::pair<int, std::unique_ptr<juce::Label>>(
-                frequency,
-                new juce::Label() ) );
+                volume,
+                new juce::Label()
+            )
+        );
     }
     
-    for ( const auto &[ frequency, label ] : m_labels ) {
+    for ( const auto &[ volume, label ] : m_labels ) {
         addAndMakeVisible( *label );
         label->setText(
-            frequency == 100 ?
-                juce::String( frequency ) :
-                juce::String( frequency / 1000 ) + "k",
-            juce::NotificationType::dontSendNotification );
+            juce::String( volume ),
+            juce::NotificationType::dontSendNotification
+        );
         label->setFont( 12 );
-        label->setColour( juce::Label::textColourId, m_gridColour );
+        label->setColour( juce::Label::textColourId, m_textColour );
         label->setJustificationType( juce::Justification::centredTop );
     }
 }

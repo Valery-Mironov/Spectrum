@@ -1,11 +1,15 @@
 #include "Visualizer.h"
 
-Visualizer::Visualizer( Analyser &a ) :
-    // Min Hz, Max Hz, Min dB, Max dB
-    m_grid( 24, 24000, -120, 12 ),
-    m_graph( a )
+Visualizer::Visualizer(
+    juce::AudioProcessorValueTreeState &audioProcessorValueTreeState,
+    Analyser &analyser ) :
+        m_grid( audioProcessorValueTreeState ),
+        m_graph( audioProcessorValueTreeState, analyser )
 {
     addAndMakeVisible( m_grid );
+    m_grid.setGridColour( juce::Colour( 0xff464646 ) );
+    m_grid.setTextColour( juce::Colour( 0xff848484 ) );
+    
     addAndMakeVisible( m_graph );
 }
 
@@ -34,18 +38,4 @@ void Visualizer::resized()
     
     m_grid.setBounds( area );
     m_graph.setBounds( area );
-}
-
-
-// ============================================================================
-Graph &Visualizer::getReferenceToTheCurve()
-{
-    return m_graph;
-}
-
-
-
-Grid &Visualizer::getReferenceToTheGrid()
-{
-    return m_grid;
 }

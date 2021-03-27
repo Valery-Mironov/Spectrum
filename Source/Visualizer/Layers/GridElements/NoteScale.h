@@ -1,40 +1,44 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../Analyser.h"
 
 // ****************************************************************************
-// GRAPH LINE CLASS
+// NOTE SCALE CLASS
 // ****************************************************************************
-class GraphLine : public juce::Component
+class NoteScale : public juce::Component
 {
 public:
-    GraphLine( Analyser & );
-    ~GraphLine() override;
+    NoteScale();
+    ~NoteScale() override;
     
     
     // ========================================================================
     void paint( juce::Graphics & ) override;
+    void resized() override;
     
     
     // ========================================================================
-    void setScaleType( bool );
-    virtual void setColour( const juce::Colour & );
-    
-protected:
+    void setGridColour( juce::Colour );
+    void setTextColour( juce::Colour );
+
+private:
     // ========================================================================
-    template<class Type>
-    float normalizeValue( Type );
-    virtual float getScopeDataFromAnalyser( size_t );
-    virtual void drawFrame( juce::Graphics & );
-    
-    
-    // ========================================================================
-    Analyser &mr_analyser;
-    std::atomic<bool> m_isLogarithmicScale { true };
-    juce::Colour m_colour { 0x0048bde8 };
+    void calculateBaseTenLogarithm();
+    void calculateFrequencyGrid();
+    void addLabels();
     
     
     // ========================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( GraphLine )
+    juce::Colour m_gridColour { 0xff464646 };
+    juce::Colour m_textColour { 0xff848484 };
+    
+    std::map<int, float> m_baseTenLogarithm;
+    std::map<int, float> m_noteGridPoints;
+    std::map<int, std::unique_ptr<juce::Label>> m_labels;
+    
+    int m_firstNote { 0 };
+    int m_lastNote { 112 };
+    
+    // ========================================================================
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR( NoteScale )
 };

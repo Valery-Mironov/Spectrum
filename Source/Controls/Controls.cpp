@@ -1,12 +1,14 @@
 #include "Controls.h"
 
-Controls::Controls( Analyser &analyser, Graph &graph, Grid &grid ) :
-    m_blockControl( analyser ),
-    m_channelControls( analyser ),
-    m_refreshControl( graph ),
-    m_graphControls( graph ),
-    m_scaleXControls( graph, grid ),
-    m_scaleYControls( analyser )
+Controls::Controls(
+    juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
+) : m_blockControl( audioProcessorValueTreeState ),
+    m_channelControls( audioProcessorValueTreeState ),
+    m_refreshControl( audioProcessorValueTreeState ),
+    m_avgControl( audioProcessorValueTreeState ),
+    m_graphControls( audioProcessorValueTreeState ),
+    m_scaleXControls( audioProcessorValueTreeState ),
+    m_scaleYControls( audioProcessorValueTreeState )
 {
     addAndMakeVisible( m_blockLabel );
     m_blockLabel.setText( "Block", juce::dontSendNotification );
@@ -42,29 +44,15 @@ Controls::Controls( Analyser &analyser, Graph &graph, Grid &grid ) :
 }
 
 
-
-Controls::~Controls()
-{
-    
-}
-
-
 // ============================================================================
-void Controls::paint( juce::Graphics &g )
-{
-    
-}
-
-
-
 void Controls::resized()
 {
     auto itemHeight { 20 };
     auto area { getLocalBounds() };
     
     area.reduced( m_marginInPixels );
-    area.removeFromLeft( getHeight() / 3 );
-        
+    area.removeFromLeft( getWidth() / 3 );
+    
     m_blockControl.setBounds( area.removeFromTop( itemHeight ) );
     m_channelControls.setBounds( area.removeFromTop( itemHeight ) );
     m_refreshControl.setBounds( area.removeFromTop( itemHeight ) );
@@ -72,4 +60,11 @@ void Controls::resized()
     m_graphControls.setBounds( area.removeFromTop( itemHeight ) );
     m_scaleXControls.setBounds( area.removeFromTop( itemHeight ) );
     m_scaleYControls.setBounds( area.removeFromTop( itemHeight ) );
+}
+
+
+// ========================================================================
+void Controls::setMarginInPixels( int margin )
+{
+    m_marginInPixels = margin;
 }

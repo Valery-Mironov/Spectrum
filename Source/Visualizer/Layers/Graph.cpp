@@ -1,16 +1,30 @@
 #include "Graph.h"
 
-Graph::Graph( Analyser &analyser ) :
+Graph::Graph(
+    juce::AudioProcessorValueTreeState &audioProcessorValueTreeState,
+    Analyser &analyser
+) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState ),
     mr_analyser( analyser ),
     m_graphMaximumsLine( analyser ),
     m_graphLine( analyser ),
     m_graphBins( analyser )
 {
     addChildComponent( m_graphMaximumsLine );
+    m_graphMaximumsLine.setColour( m_volumeMaximumsGraphColour );
+    
     addChildComponent( m_graphLine );
+    m_graphLine.setColour( m_volumeGraphColour );
+    
     addChildComponent( m_graphBins );
-    setGraphStyleAsBins( false );
-    maximumVolumesAreShown( true );
+    m_graphBins.setColour( m_volumeGraphColour );
+    
+    mr_audioProcessorValueTreeState.addParameterListener( "REFRESH_ID", this );
+    mr_audioProcessorValueTreeState.addParameterListener( "BINS_ID", this );
+    mr_audioProcessorValueTreeState.addParameterListener( "MAX_ID", this );
+    mr_audioProcessorValueTreeState.addParameterListener( "LIN_ID", this );
+    mr_audioProcessorValueTreeState.addParameterListener( "LOG_ID", this );
+    mr_audioProcessorValueTreeState.addParameterListener( "ST_ID", this );
+    
     addMouseListener( this, true );
     startTimer( 60 );
 }
@@ -26,7 +40,12 @@ Graph::~Graph()
 // ============================================================================
 void Graph::paint( juce::Graphics &g )
 {
-    
+    g.setColour( juce::Colours::white );
+    g.drawText(
+        juce::String( mr_analyser.getcurrentMaximumInDecibels() ),
+        getLocalBounds(),
+        juce::Justification::centred
+    );
 }
 
 
@@ -43,12 +62,27 @@ void Graph::resized()
 void Graph::mouseDown( const juce::MouseEvent &event )
 {
     mr_analyser.resetScopeMaximumsData();
-    
-    std::cout << std::endl;
-    std::cout << "----------------> GRAPH <----------------";
-    std::cout << std::endl;
-    std::cout << "Scope maximums data reset.";
-    std::cout << std::endl;
+}
+
+
+// ============================================================================
+void Graph::timerCallback()
+{
+    if ( mr_analyser.getNextFFTBlockStatus() )
+    {
+        mr_analyser.calculateNextFrameOfSpectrum();
+        mr_analyser.setNextFFTBlockStatus( false );
+        
+        m_graphMaximumsLine.setScaleType( m_scaleTypeIsLogarithmic.load() );
+        m_graphLine.setScaleType( m_scaleTypeIsLogarithmic.load() );
+        m_graphBins.setScaleType( m_scaleTypeIsLogarithmic.load() );
+        
+        m_graphMaximumsLine.setVisible( m_maximumVolumesIsVisible.load() );
+        m_graphLine.setVisible( m_graphStyleIsLine.load() );
+        m_graphBins.setVisible( ! m_graphStyleIsLine.load() );
+        
+        repaint();
+    }
 }
 
 
@@ -57,77 +91,53 @@ void Graph::setTimerInterval( int milliseconds )
 {
     stopTimer();
     startTimer( milliseconds );
-    
-    std::cout << std::endl;
-    std::cout << "----------------> GRAPH <----------------";
-    std::cout << std::endl;
-    std::cout << "Timer interval: ";
-    std::cout << getTimerInterval();
-    std::cout << " ms";
-    std::cout << std::endl;
 }
 
 
 
-void Graph::timerCallback()
+void Graph::setGraphStyleAsLine( bool isLine )
 {
-    if ( mr_analyser.getNextFFTBlockStatus() )
-    {
-        mr_analyser.drawNextFrameOfSpectrum();
-        mr_analyser.setNextFFTBlockStatus( false );
-        repaint();
-    }
-}
-
-
-// ============================================================================
-void Graph::setScaleType( bool isLogarithmic )
-{
-    m_graphMaximumsLine.setScaleType( isLogarithmic );
-    m_graphLine.setScaleType( isLogarithmic );
-    m_graphBins.setScaleType( isLogarithmic );
+    m_graphStyleIsLine.store( isLine );
 }
 
 
 
-void Graph::setGraphStyleAsBins( bool isBins )
+void Graph::setMaximumVolumesVisible( bool isVisible )
 {
-    if ( isBins == true )
-    {
-        m_graphLine.setVisible( false );
-        m_graphBins.setVisible( true );
-    }
-    else
-    {
-        m_graphLine.setVisible( true );
-        m_graphBins.setVisible( false );
-    }
-    
-    std::cout << std::endl;
-    std::cout << "----------------> GRAPH <----------------";
-    std::cout << std::endl;
-    std::cout << "Graph style is bins: ";
-    std::cout << std::boolalpha << isBins;
-    std::cout << std::endl;
+    m_maximumVolumesIsVisible.store( isVisible );
+}
+
+
+
+void Graph::setScaleTypeAsLogarithmic( bool isLogarithmic )
+{
+    m_scaleTypeIsLogarithmic.store( isLogarithmic );
 }
 
 
 // ============================================================================
-void Graph::maximumVolumesAreShown( bool areShown )
-{
-    if ( areShown )
+void Graph::parameterChanged(
+    const juce::String &parameterID,
+    float newValue
+) {
+    if ( parameterID == "REFRESH_ID" )
     {
-        m_graphMaximumsLine.setVisible( true );
+        setTimerInterval( static_cast<int>( newValue ) );
     }
-    else
+    if ( parameterID == "BINS_ID" )
     {
-        m_graphMaximumsLine.setVisible( false );
+        setGraphStyleAsLine( static_cast<bool>( newValue ) );
     }
-    
-    std::cout << std::endl;
-    std::cout << "----------------> GRAPH <----------------";
-    std::cout << std::endl;
-    std::cout << "Maximum volumes are shown: ";
-    std::cout << std::boolalpha << areShown;
-    std::cout << std::endl;
+    else if ( parameterID == "MAX_ID" )
+    {
+        setMaximumVolumesVisible( static_cast<bool>( newValue ) );
+    }
+    else if ( parameterID == "LIN_ID" )
+    {
+        setScaleTypeAsLogarithmic( false );
+    }
+    else if ( parameterID == "LOG_ID" || parameterID == "ST_ID" )
+    {
+        setScaleTypeAsLogarithmic( true );
+    }
 }

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="XLYqk9" name="Spectrum" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              cppLanguageStandard="17">
   <MAINGROUP id="eDuWj8" name="Spectrum">
     <GROUP id="{5E62CE1F-02EE-0497-2F80-6274BA113368}" name="Source">
       <GROUP id="{163C6E0E-C963-9BF4-FB3E-F835DF907FB9}" name="Controls">
@@ -36,6 +37,16 @@
       </GROUP>
       <GROUP id="{904D22F2-AE0A-B010-C7EE-E0368FCB88D6}" name="Visualizer">
         <GROUP id="{F6464C06-0EED-C331-527D-23AE814942CA}" name="Layers">
+          <GROUP id="{359A650C-477E-1C92-E953-84EAF1131DFC}" name="Grid Elements">
+            <FILE id="ZGmbfq" name="LinearScale.cpp" compile="1" resource="0" file="Source/Visualizer/Layers/GridElements/LinearScale.cpp"/>
+            <FILE id="SMTr8y" name="LinearScale.h" compile="0" resource="0" file="Source/Visualizer/Layers/GridElements/LinearScale.h"/>
+            <FILE id="Zr1OBQ" name="LogarithmicScale.cpp" compile="1" resource="0"
+                  file="Source/Visualizer/Layers/GridElements/LogarithmicScale.cpp"/>
+            <FILE id="ovgcFL" name="LogarithmicScale.h" compile="0" resource="0"
+                  file="Source/Visualizer/Layers/GridElements/LogarithmicScale.h"/>
+            <FILE id="JLwcVx" name="NoteScale.cpp" compile="1" resource="0" file="Source/Visualizer/Layers/GridElements/NoteScale.cpp"/>
+            <FILE id="porCDY" name="NoteScale.h" compile="0" resource="0" file="Source/Visualizer/Layers/GridElements/NoteScale.h"/>
+          </GROUP>
           <GROUP id="{5F545FC2-3A5B-1377-BB32-C7DD852D64A2}" name="GraphElements">
             <FILE id="BzIqei" name="GraphMaximumsLine.cpp" compile="1" resource="0"
                   file="Source/Visualizer/Layers/GraphElements/GraphMaximumsLine.cpp"/>

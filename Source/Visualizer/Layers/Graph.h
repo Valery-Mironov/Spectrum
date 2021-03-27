@@ -10,7 +10,6 @@
     TASKS
     
     Layer with interpretation of cursor position in note, frequency and volume
-    Make the maximum and minimum values invisible
 */
 
 // ****************************************************************************
@@ -18,39 +17,52 @@
 // ****************************************************************************
 class Graph :
     public juce::Component,
+    public juce::AudioProcessorValueTreeState::Listener,
     private juce::Timer
 {
 public:
-    Graph( Analyser &analyser );
+    Graph( juce::AudioProcessorValueTreeState &, Analyser & );
     ~Graph() override;
     
     
     // ========================================================================
-    void paint( juce::Graphics &g ) override;
+    void paint( juce::Graphics & ) override;
     void resized() override;
     
     
     // ========================================================================
-    void mouseDown( const juce::MouseEvent &event ) override;
+    void mouseDown( const juce::MouseEvent & ) override;
     
     
     // ========================================================================
-    void setTimerInterval( int milliseconds );
     void timerCallback() override;
-    
-    
-    // ========================================================================
-    void setScaleType( bool isLogarithmic );
-    void setGraphStyleAsBins( bool isBins );
-    void maximumVolumesAreShown( bool areShown );
     
 private:
     // ========================================================================
+    void setTimerInterval( int );
+    void setGraphStyleAsLine( bool );
+    void setMaximumVolumesVisible( bool );
+    void setScaleTypeAsLogarithmic( bool );
+    
+    
+    // ========================================================================
+    void parameterChanged( const juce::String &, float ) override;
+    
+    
+    // ========================================================================
+    juce::AudioProcessorValueTreeState &mr_audioProcessorValueTreeState;
     Analyser &mr_analyser;
     
     GraphMaximumsLine m_graphMaximumsLine;
     GraphLine m_graphLine;
     GraphBins m_graphBins;
+    
+    std::atomic<bool> m_graphStyleIsLine { true };
+    std::atomic<bool> m_maximumVolumesIsVisible { true };
+    std::atomic<bool> m_scaleTypeIsLogarithmic { true };
+    
+    juce::Colour m_volumeMaximumsGraphColour { 0xff245e74 };
+    juce::Colour m_volumeGraphColour { 0xff48bde8 };
     
     
     // ========================================================================
