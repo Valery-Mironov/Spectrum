@@ -61,7 +61,6 @@ private:
     
     
     // ========================================================================
-    std::atomic<Channels> m_activeChannels { Channels::both };
     ValueTree &mr_valueTree;
     
     juce::dsp::FFT m_forwardFFT_11;
@@ -79,6 +78,8 @@ private:
     std::atomic<size_t> m_scopeSize;
     std::atomic<size_t> m_fifoIndex;
     
+    std::atomic<Channels> m_activeChannels { Channels::both };
+    
     std::atomic<bool> m_blockSizeDefined { false };
     std::atomic<bool> m_nextFFTBlockReady { false };
     std::atomic<bool> m_volumeRangeIsDynamamic { false };
@@ -92,7 +93,7 @@ private:
     std::vector<float> m_scopeMaximumData;
     
     std::atomic<size_t> m_avgFactor { 1 };
-    std::atomic<size_t> m_avgFifoSize { 1 };
+    std::atomic<size_t> m_avgFifoSize { 0 };
     std::atomic<size_t> m_avgFifoWritePointer { 0 };
     size_t              m_avgFifoReadPointer;
     static const size_t m_avgFifoMaximumSize { 16 };

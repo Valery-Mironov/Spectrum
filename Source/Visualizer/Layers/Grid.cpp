@@ -2,7 +2,8 @@
 
 Grid::Grid(
     juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
-) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
+) :
+    mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
 {
     addChildComponent( m_logarithmicScale );
     addChildComponent( m_linearScale );
@@ -55,9 +56,9 @@ void Grid::paint( juce::Graphics &g )
         );
     }
     
-    m_linearScale.setVisible( m_gridStyleIsLinear );
-    m_logarithmicScale.setVisible( m_gridStyleIsLogarithmic );
-    m_noteScale.setVisible( m_gridStyleIsST );
+    m_linearScale.setVisible( m_gridStyleIsLinear.load() );
+    m_logarithmicScale.setVisible( m_gridStyleIsLogarithmic.load() );
+    m_noteScale.setVisible( m_gridStyleIsST.load() );
 }
 
 
@@ -122,23 +123,23 @@ void Grid::parameterChanged(
 
 
 // ============================================================================
-void Grid::setGridStyle( GridStyles style )
+void Grid::setGridStyle( const GridStyles style )
 {
     switch ( style  ) {
         case GridStyles::linear:
-            m_gridStyleIsLinear = true;
-            m_gridStyleIsLogarithmic = false;
-            m_gridStyleIsST = false;
+            m_gridStyleIsLinear.store( true );
+            m_gridStyleIsLogarithmic.store( false );
+            m_gridStyleIsST.store( false );
             break;
         case GridStyles::logarithmic:
-            m_gridStyleIsLinear = false;
-            m_gridStyleIsLogarithmic = true;
-            m_gridStyleIsST = false;
+            m_gridStyleIsLinear.store( false );
+            m_gridStyleIsLogarithmic.store( true );
+            m_gridStyleIsST.store( false );
             break;
         case GridStyles::st:
-            m_gridStyleIsLinear = false;
-            m_gridStyleIsLogarithmic = false;
-            m_gridStyleIsST = true;
+            m_gridStyleIsLinear.store( false );
+            m_gridStyleIsLogarithmic.store( false );
+            m_gridStyleIsST.store( true );
             break;
         default:
             DBG( "Error! Unknown grid style." );
@@ -150,7 +151,7 @@ void Grid::setGridStyle( GridStyles style )
 
 
 
-void Grid::setVolumeRangeInDecibels( int maximum, int minimum )
+void Grid::setVolumeRangeInDecibels( const int maximum, int minimum )
 {
     if ( maximum - 10 < minimum ) { minimum = maximum - 10; }
     

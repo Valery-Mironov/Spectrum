@@ -18,14 +18,14 @@ public:
     
     
     // ========================================================================
-    void setScaleType( bool );
+    void setScaleType( const bool );
     virtual void setColour( const juce::Colour & );
     
 protected:
     // ========================================================================
     template<class Type>
-    float normalizeValue( Type );
-    virtual float getScopeDataFromAnalyser( size_t );
+    float normalizeValue( const Type );
+    virtual float getScopeDataFromAnalyser( const size_t );
     virtual void drawFrame( juce::Graphics & );
     
     

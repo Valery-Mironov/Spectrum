@@ -13,7 +13,7 @@ void GraphLine::paint( juce::Graphics &g )
 
 
 // ============================================================================
-void GraphLine::setScaleType( bool isLogarithmic )
+void GraphLine::setScaleType( const bool isLogarithmic )
 {
     m_isLogarithmicScale.store( isLogarithmic );
 }
@@ -28,7 +28,7 @@ void GraphLine::setColour( const juce::Colour &colour )
 
 // ============================================================================
 template<class Type>
-float GraphLine::normalizeValue( Type T )
+float GraphLine::normalizeValue( const Type T )
 {
     if ( T != 0 && m_isLogarithmicScale.load() )
     {        
@@ -41,7 +41,7 @@ float GraphLine::normalizeValue( Type T )
 }
 
 
-float GraphLine::getScopeDataFromAnalyser( size_t index )
+float GraphLine::getScopeDataFromAnalyser( const size_t index )
 {
     return mr_analyser.getScopeData( index );
 }

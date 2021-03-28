@@ -6,12 +6,6 @@
 #include "GraphElements/GraphBins.h"
 #include "GraphElements/GraphMaximumsLine.h"
 
-/*
-    TASKS
-    
-    Layer with interpretation of cursor position in note, frequency and volume
-*/
-
 // ****************************************************************************
 // GRAPH CLASS
 // ****************************************************************************
@@ -37,12 +31,17 @@ public:
     // ========================================================================
     void timerCallback() override;
     
+    
+    // ========================================================================
+    void setGraphColour( juce::Colour );
+    void setGraphMaximumsColour( juce::Colour );
+    
 private:
     // ========================================================================
-    void setTimerInterval( int );
-    void setGraphStyleAsLine( bool );
-    void setMaximumVolumesVisible( bool );
-    void setScaleTypeAsLogarithmic( bool );
+    void setTimerInterval( const int );
+    void setGraphStyleAsLine( const bool );
+    void setMaximumVolumesVisible( const bool );
+    void setScaleTypeAsLogarithmic( const bool );
     
     
     // ========================================================================
@@ -61,8 +60,8 @@ private:
     std::atomic<bool> m_maximumVolumesIsVisible { true };
     std::atomic<bool> m_scaleTypeIsLogarithmic { true };
     
-    juce::Colour m_volumeMaximumsGraphColour { 0xff245e74 };
     juce::Colour m_volumeGraphColour { 0xff48bde8 };
+    juce::Colour m_volumeMaximumsGraphColour { 0xff245e74 };
     
     
     // ========================================================================

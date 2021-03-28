@@ -35,6 +35,7 @@ private:
     Controls m_controls;
     
     juce::Colour backgroundColour { 0xffd2d2d2 };
+    
     static constexpr double m_marginInPixels { 10 };
     
     

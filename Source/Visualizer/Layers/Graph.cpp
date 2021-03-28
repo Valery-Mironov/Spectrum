@@ -3,7 +3,8 @@
 Graph::Graph(
     juce::AudioProcessorValueTreeState &audioProcessorValueTreeState,
     Analyser &analyser
-) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState ),
+) :
+    mr_audioProcessorValueTreeState( audioProcessorValueTreeState ),
     mr_analyser( analyser ),
     m_graphMaximumsLine( analyser ),
     m_graphLine( analyser ),
@@ -87,7 +88,21 @@ void Graph::timerCallback()
 
 
 // ============================================================================
-void Graph::setTimerInterval( int milliseconds )
+void Graph::setGraphColour( juce::Colour colour )
+{
+    m_volumeGraphColour = colour;
+}
+
+
+
+void Graph::setGraphMaximumsColour( juce::Colour colour )
+{
+    m_volumeMaximumsGraphColour = colour;
+}
+
+
+// ============================================================================
+void Graph::setTimerInterval( const int milliseconds )
 {
     stopTimer();
     startTimer( milliseconds );
@@ -95,21 +110,21 @@ void Graph::setTimerInterval( int milliseconds )
 
 
 
-void Graph::setGraphStyleAsLine( bool isLine )
+void Graph::setGraphStyleAsLine( const bool isLine )
 {
     m_graphStyleIsLine.store( isLine );
 }
 
 
 
-void Graph::setMaximumVolumesVisible( bool isVisible )
+void Graph::setMaximumVolumesVisible( const bool isVisible )
 {
     m_maximumVolumesIsVisible.store( isVisible );
 }
 
 
 
-void Graph::setScaleTypeAsLogarithmic( bool isLogarithmic )
+void Graph::setScaleTypeAsLogarithmic( const bool isLogarithmic )
 {
     m_scaleTypeIsLogarithmic.store( isLogarithmic );
 }

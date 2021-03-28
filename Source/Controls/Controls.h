@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Separator.h"
 #include "Categories/BlockControl.h"
 #include "Categories/ChannelControls.h"
 #include "Categories/RefreshControl.h"
@@ -31,10 +32,14 @@ public:
     
     
     // ========================================================================
-    void setMarginInPixels( int );
+    void setMarginInPixels( const int );
     
 private:
     // ========================================================================
+    Separator m_firstSeparator;
+    Separator m_secondSeparator;
+    Separator m_thirdSeparator;
+    
     juce::Label m_blockLabel;
     juce::Label m_channelLabel;
     juce::Label m_refreshLabel;

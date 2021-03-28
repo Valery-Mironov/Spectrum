@@ -10,13 +10,15 @@ SpectrumAudioProcessorEditor::SpectrumAudioProcessorEditor(
     m_visualizer( audioProcessorValueTreeState, analyser ),
     m_controls( audioProcessorValueTreeState )
 {
-    addAndMakeVisible( m_visualizer );
-    
     addAndMakeVisible( m_controls );
     m_controls.setMarginInPixels( m_marginInPixels );
     
+    addAndMakeVisible( m_visualizer );
+    m_visualizer.setMarginInPixels( m_marginInPixels );
+    m_visualizer.setBackgroundColour( juce::Colour( 0xff323232 ) );
+    
     setResizable( true, true );
-    setSize( 600, 240 );
+    setSize( 600, 255 );
 }
 
 
@@ -35,10 +37,12 @@ void SpectrumAudioProcessorEditor::paint( juce::Graphics &g )
 void SpectrumAudioProcessorEditor::resized()
 {
     if ( getWidth() < 600 ) { setSize( 600, getHeight() ); }
-    if ( getHeight() < 240 ) { setSize( getWidth(), 240 ); }
+    if ( getHeight() < 255 ) { setSize( getWidth(), 255 ); }
     
     auto area = getLocalBounds().reduced( m_marginInPixels );
     
-    m_controls.setBounds( area.removeFromLeft( area.getWidth() / 3 ) );
+    m_controls.setBounds(
+        area.removeFromLeft( 200 ).reduced( m_marginInPixels )
+    );
     m_visualizer.setBounds( area );
 }

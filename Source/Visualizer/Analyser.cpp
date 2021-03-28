@@ -248,9 +248,7 @@ void Analyser::calculateCurrentVolumes()
         auto data { juce::Decibels::gainToDecibels( fftData ) };
         auto currentVolumeInDecibels { data - offset };
         
-        m_avgData[
-            m_avgFifoWritePointer.load()
-        ].push_back( currentVolumeInDecibels );
+        m_avgData[ m_avgFifoWritePointer.load() ].push_back( currentVolumeInDecibels );
     }
     
     if ( m_avgFifoSize.load() != m_avgFactor.load() ) { ++m_avgFifoSize; }

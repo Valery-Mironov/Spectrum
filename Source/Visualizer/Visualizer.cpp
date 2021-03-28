@@ -12,6 +12,8 @@ Visualizer::Visualizer(
     m_grid.setTextColour( juce::Colour( 0xff848484 ) );
     
     addAndMakeVisible( m_graph );
+    m_graph.setGraphColour( juce::Colour( 0xff48bde8 ) );
+    m_graph.setGraphMaximumsColour( juce::Colour( 0xff245e74 ) );
 }
 
 
@@ -27,7 +29,7 @@ void Visualizer::paint( juce::Graphics &g )
 {
     juce::Path path;
     path.addRoundedRectangle( getLocalBounds(), m_marginInPixels );
-    g.setColour( backgroundColour );
+    g.setColour( m_backgroundColour );
     g.fillPath( path );
 }
 
@@ -39,4 +41,18 @@ void Visualizer::resized()
     
     m_grid.setBounds( area );
     m_graph.setBounds( area );
+}
+
+
+// ============================================================================
+void Visualizer::setBackgroundColour( juce::Colour colour )
+{
+    m_backgroundColour = colour;
+}
+
+
+// ========================================================================
+void Visualizer::setMarginInPixels( const int margin )
+{
+    m_marginInPixels = margin;
 }

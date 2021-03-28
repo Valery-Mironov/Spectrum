@@ -15,7 +15,7 @@ public:
     
 private:
     // ========================================================================
-    float getScopeDataFromAnalyser( size_t ) override;
+    float getScopeDataFromAnalyser( const size_t ) override;
     
     
     // ========================================================================

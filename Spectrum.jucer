@@ -34,6 +34,8 @@
         </GROUP>
         <FILE id="ve5gP2" name="Controls.cpp" compile="1" resource="0" file="Source/Controls/Controls.cpp"/>
         <FILE id="RYGPRQ" name="Controls.h" compile="0" resource="0" file="Source/Controls/Controls.h"/>
+        <FILE id="MlTya0" name="Separator.cpp" compile="1" resource="0" file="Source/Controls/Separator.cpp"/>
+        <FILE id="QJuQUN" name="Separator.h" compile="0" resource="0" file="Source/Controls/Separator.h"/>
       </GROUP>
       <GROUP id="{904D22F2-AE0A-B010-C7EE-E0368FCB88D6}" name="Visualizer">
         <GROUP id="{F6464C06-0EED-C331-527D-23AE814942CA}" name="Layers">

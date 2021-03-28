@@ -36,8 +36,8 @@ private:
     
     
     // ========================================================================
-    void setGridStyle( GridStyles );
-    void setVolumeRangeInDecibels( int, int );
+    void setGridStyle( const GridStyles );
+    void setVolumeRangeInDecibels( const int, int );
     void calculateAmplitudeGrid();
     void addLabels();
     
@@ -45,16 +45,16 @@ private:
     // ========================================================================
     juce::AudioProcessorValueTreeState &mr_audioProcessorValueTreeState;
     
-    bool m_gridStyleIsLinear { false };
-    bool m_gridStyleIsLogarithmic { true };
-    bool m_gridStyleIsST { false };
-    
     LogarithmicScale m_logarithmicScale;
     LinearScale m_linearScale;
     NoteScale m_noteScale;
     
     juce::Colour m_gridColour { 0xff464646 };
     juce::Colour m_textColour { 0xff848484 };
+    
+    std::atomic<bool> m_gridStyleIsLinear { false };
+    std::atomic<bool> m_gridStyleIsLogarithmic { true };
+    std::atomic<bool> m_gridStyleIsST { false };
     
     std::atomic<int> m_maximumVolumeInDecibels { 12 };
     std::atomic<int> m_minimumVolumeInDecibels { -120 };
