@@ -18,7 +18,7 @@ SpectrumAudioProcessorEditor::SpectrumAudioProcessorEditor(
     m_visualizer.setBackgroundColour( juce::Colour( 0xff323232 ) );
     
     setResizable( true, true );
-    setSize( 600, 255 );
+    setSize( 680, 255 );
 }
 
 
@@ -41,8 +41,6 @@ void SpectrumAudioProcessorEditor::resized()
     
     auto area = getLocalBounds().reduced( m_marginInPixels );
     
-    m_controls.setBounds(
-        area.removeFromLeft( 200 ).reduced( m_marginInPixels )
-    );
+    m_controls.setBounds( area.removeFromLeft( 200 ) );
     m_visualizer.setBounds( area );
 }

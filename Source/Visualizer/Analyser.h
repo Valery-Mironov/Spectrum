@@ -30,7 +30,6 @@ public:
     size_t getScopeSize();
     float getScopeData( size_t );
     float getScopeMaximumsData( size_t );
-    float getCurrentMaximumInDecibels();
     float getOffset();
     
     
@@ -100,9 +99,11 @@ private:
     
     std::array<std::vector<float>, m_avgFifoMaximumSize> m_avgData;
     
+    juce::CriticalSection m_volumeRangeChange;
+    float m_maximumVolumeInDecibels { 12.0f };
+    float m_minimumVolumeInDecibels { -120.0f };
+    
     std::atomic<float> m_offset;
-    std::atomic<float> m_maximumVolumeInDecibels { 12.0f };
-    std::atomic<float> m_minimumVolumeInDecibels { -120.0f };
     std::atomic<float> m_currentMaximumVolumeInDecibels;
     std::atomic<float> m_currentAverageVolumeInDecibels;
     

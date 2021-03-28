@@ -32,7 +32,9 @@ Analyser::Analyser( ValueTree &audioProcessorValueTreeState ) :
 // ============================================================================
 void Analyser::resetScopeMaximumsData()
 {
-    auto minimum { m_minimumVolumeInDecibels.load() };
+    const juce::ScopedLock lock( m_volumeRangeChange );
+    
+    auto minimum { m_minimumVolumeInDecibels };
     
     for ( auto &data : m_volumsMaximumData )
     {
@@ -76,13 +78,6 @@ float Analyser::getScopeData( size_t index )
 float Analyser::getScopeMaximumsData( size_t index )
 {
     return m_scopeMaximumData.at( index );
-}
-
-
-
-float Analyser::getCurrentMaximumInDecibels()
-{
-    return m_currentMaximumVolumeInDecibels.load();
 }
 
 
@@ -321,20 +316,26 @@ void Analyser::calculateCurrentAverageVolume()
         );
     }
     
-    m_currentAverageVolumeInDecibels.store( m_currentAverageVolumeInDecibels.load() /
-        static_cast<float>( m_scopeSize.load() )
-    );
+    {
+        const juce::ScopedLock lock( m_volumeRangeChange );
+        
+        m_currentAverageVolumeInDecibels.store( m_currentAverageVolumeInDecibels.load() /
+            static_cast<float>( m_scopeSize.load() )
+        );
+    }
 }
 
 
 
 float Analyser::adaptData( const float volume )
 {
+    const juce::ScopedLock lock( m_volumeRangeChange );
+    
     auto data {
         juce::jmap(
             volume,
-            m_minimumVolumeInDecibels.load(),
-            m_maximumVolumeInDecibels.load(),
+            m_minimumVolumeInDecibels,
+            m_maximumVolumeInDecibels,
             0.0f,
             1.0f )
     };
@@ -412,14 +413,19 @@ void Analyser::setFFTBlockSize( const int blockMenuIndex )
     m_fifo.resize( m_fftSize.load() );
     m_fftData.resize( m_fftSize.load() * 2 );
     
-    m_volumsDynamicData.resize(
-        m_scopeSize.load(),
-        m_minimumVolumeInDecibels.load()
-    );
-    m_volumsMaximumData.resize(
-        m_scopeSize.load(),
-        m_minimumVolumeInDecibels.load()
-    );
+    {
+        const juce::ScopedLock lock( m_volumeRangeChange );
+        
+        m_volumsDynamicData.resize(
+            m_scopeSize.load(),
+            m_minimumVolumeInDecibels
+        );
+        m_volumsMaximumData.resize(
+            m_scopeSize.load(),
+            m_minimumVolumeInDecibels
+        );
+    }
+    
     m_scopeDynamicData.resize(
         m_scopeSize.load(),
         0
@@ -429,12 +435,13 @@ void Analyser::setFFTBlockSize( const int blockMenuIndex )
         0
     );
     
-    for ( auto &vector : m_avgData )
     {
-        vector.resize(
-            m_scopeSize.load(),
-            m_minimumVolumeInDecibels.load()
-        );
+        const juce::ScopedLock lock( m_volumeRangeChange );
+        
+        for ( auto &vector : m_avgData )
+        {
+            vector.resize( m_scopeSize.load(), m_minimumVolumeInDecibels );
+        }
     }
     
     m_avgFifoSize.store( 0 );
@@ -472,6 +479,8 @@ void Analyser::setVolumeScaleModeAsDynamic( bool isDynamamic )
 
 void Analyser::setVolumeRangeInDecibels( float maximum, float minimum )
 {
-    m_maximumVolumeInDecibels.store( maximum );
-    m_minimumVolumeInDecibels.store( minimum );
+    const juce::ScopedLock lock( m_volumeRangeChange );
+    
+    m_maximumVolumeInDecibels = maximum;
+    m_minimumVolumeInDecibels = minimum;
 }

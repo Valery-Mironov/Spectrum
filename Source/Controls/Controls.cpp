@@ -50,7 +50,7 @@ Controls::Controls(
 // ============================================================================
 void Controls::resized()
 {
-    auto area { getLocalBounds() };
+    auto area { getLocalBounds().reduced( m_marginInPixels ) };
     auto itemHeight { 20 };
     auto line { area.removeFromTop( itemHeight ) };
     auto column { area.getWidth() / 3 };

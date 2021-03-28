@@ -18,10 +18,7 @@ Visualizer::Visualizer(
 
 
 
-Visualizer::~Visualizer()
-{
-    
-}
+Visualizer::~Visualizer() {}
 
 
 // ============================================================================
