@@ -5,7 +5,8 @@
 // ****************************************************************************
 AvgControl::AvgControl(
     juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
-) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
+) :
+    mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
 {
     addAndMakeVisible( m_avgSlider );
     m_avgSlider.setSliderStyle( juce::Slider::SliderStyle::LinearBar );

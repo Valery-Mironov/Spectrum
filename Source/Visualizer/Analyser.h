@@ -2,12 +2,6 @@
 
 #include <JuceHeader.h>
 
-/*
-    TASKS
-    
-    Setting "Avg" by the nearest 1-8 volume values
-*/
-
 using ValueTree = juce::AudioProcessorValueTreeState;
 
 // ****************************************************************************
@@ -16,6 +10,10 @@ using ValueTree = juce::AudioProcessorValueTreeState;
 class Analyser : public ValueTree::Listener
 {
 public:
+    enum class Channels { left, right, both };
+    
+    
+    // ========================================================================
     Analyser( ValueTree & );
     
     
@@ -32,20 +30,21 @@ public:
     size_t getScopeSize();
     float getScopeData( size_t );
     float getScopeMaximumsData( size_t );
-    float getcurrentMaximumInDecibels();
+    float getCurrentMaximumInDecibels();
     float getOffset();
     
     
     // ========================================================================
-    void pushSamplesIntoFifo( float, float ) noexcept;
+    void pushSamplesIntoFifo( const float, const float ) noexcept;
     void calculateNextFrameOfSpectrum();
     
 private:
     // ========================================================================
     void processFFT();
+    void calculateCurrentVolumes();
     void calculateDynamicVolumes();
     void calculateMaximumVolumes();
-    void calculateMinimumVolume();
+    void calculateCurrentAverageVolume();
     float adaptData( float );
     
     
@@ -55,25 +54,15 @@ private:
     
     // ========================================================================
     void setFFTBlockSize( int );
-    void setActiveChannel( int );
+    void setActiveChannel( Channels );
+    void setAvg( size_t );
     void setVolumeScaleModeAsDynamic( bool );
     void setVolumeRangeInDecibels( float, float );
     
     
     // ========================================================================
-    enum Channel { e_left = 0, e_right, e_leftPlusRight };
-    
+    std::atomic<Channels> m_activeChannels { Channels::both };
     ValueTree &mr_valueTree;
-    
-    bool m_blockSizeDefined { false };
-    bool m_nextFFTBlockReady { false };
-    bool m_volumeRangeIsDynamamic { false };
-    bool m_frequencyIsLogarithmic { true };
-    
-    size_t m_fftOrder;
-    size_t m_fftSize;
-    size_t m_scopeSize;
-    size_t m_fifoIndex;
     
     juce::dsp::FFT m_forwardFFT_11;
     juce::dsp::FFT m_forwardFFT_12;
@@ -85,6 +74,16 @@ private:
     juce::dsp::WindowingFunction<float> m_window_8192;
     juce::dsp::WindowingFunction<float> m_window_16384;
     
+    std::atomic<size_t> m_fftOrder;
+    std::atomic<size_t> m_fftSize;
+    std::atomic<size_t> m_scopeSize;
+    std::atomic<size_t> m_fifoIndex;
+    
+    std::atomic<bool> m_blockSizeDefined { false };
+    std::atomic<bool> m_nextFFTBlockReady { false };
+    std::atomic<bool> m_volumeRangeIsDynamamic { false };
+    std::atomic<bool> m_frequencyIsLogarithmic { true };
+    
     std::vector<float> m_fifo;
     std::vector<float> m_fftData;
     std::vector<float> m_volumsDynamicData;
@@ -92,12 +91,19 @@ private:
     std::vector<float> m_scopeDynamicData;
     std::vector<float> m_scopeMaximumData;
     
-    float m_offset;
-    float m_maximumVolumeInDecibels { 12 };
-    float m_minimumVolumeInDecibels { -120 };
-    float m_currentMaximumVolumeInDecibels;
-    float m_currentMinimumVolumeInDecibels;
-    int m_activeChannel { e_leftPlusRight };
+    std::atomic<size_t> m_avgFactor { 1 };
+    std::atomic<size_t> m_avgFifoSize { 1 };
+    std::atomic<size_t> m_avgFifoWritePointer { 0 };
+    size_t              m_avgFifoReadPointer;
+    static const size_t m_avgFifoMaximumSize { 16 };
+    
+    std::array<std::vector<float>, m_avgFifoMaximumSize> m_avgData;
+    
+    std::atomic<float> m_offset;
+    std::atomic<float> m_maximumVolumeInDecibels { 12.0f };
+    std::atomic<float> m_minimumVolumeInDecibels { -120.0f };
+    std::atomic<float> m_currentMaximumVolumeInDecibels;
+    std::atomic<float> m_currentAverageVolumeInDecibels;
     
     
     // ========================================================================

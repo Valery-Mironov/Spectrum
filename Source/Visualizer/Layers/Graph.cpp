@@ -42,7 +42,7 @@ void Graph::paint( juce::Graphics &g )
 {
     g.setColour( juce::Colours::white );
     g.drawText(
-        juce::String( mr_analyser.getcurrentMaximumInDecibels() ),
+        juce::String( mr_analyser.getCurrentMaximumInDecibels() ),
         getLocalBounds(),
         juce::Justification::centred
     );

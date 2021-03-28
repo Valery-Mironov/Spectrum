@@ -4,7 +4,8 @@ SpectrumAudioProcessorEditor::SpectrumAudioProcessorEditor(
     SpectrumAudioProcessor &audioProcessor,
     juce::AudioProcessorValueTreeState &audioProcessorValueTreeState,
     Analyser &analyser
-) : AudioProcessorEditor( &audioProcessor ),
+) :
+    AudioProcessorEditor( &audioProcessor ),
     mr_audioProcessor( audioProcessor ),
     m_visualizer( audioProcessorValueTreeState, analyser ),
     m_controls( audioProcessorValueTreeState )

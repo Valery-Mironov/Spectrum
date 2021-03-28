@@ -14,7 +14,11 @@ public:
     SpectrumAudioProcessorEditor(
         SpectrumAudioProcessor &,
         juce::AudioProcessorValueTreeState &,
-        Analyser & );
+        Analyser &
+    );
+    
+    
+    
     ~SpectrumAudioProcessorEditor() override;
     
     

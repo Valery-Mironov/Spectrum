@@ -5,7 +5,8 @@
 // ****************************************************************************
 BlockControl::BlockControl(
     juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
-) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
+) :
+    mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
 {
     addAndMakeVisible( m_blockComboBox );
     m_blockComboBox.addItem( "2048", 11 );

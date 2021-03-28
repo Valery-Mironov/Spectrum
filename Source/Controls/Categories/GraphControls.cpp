@@ -2,7 +2,8 @@
 
 GraphControls::GraphControls(
     juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
-) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
+) :
+    mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
 {
     addAndMakeVisible( m_lineTextButton );
     m_lineTextButton.setButtonText( "Line" );

@@ -2,7 +2,8 @@
 
 ScaleXControls::ScaleXControls(
     juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
-) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
+) :
+    mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
 {
     addAndMakeVisible( m_linearModeTextButton );
     m_linearModeTextButton.setButtonText( "Lin" );

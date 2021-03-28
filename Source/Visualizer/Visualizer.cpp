@@ -2,9 +2,10 @@
 
 Visualizer::Visualizer(
     juce::AudioProcessorValueTreeState &audioProcessorValueTreeState,
-    Analyser &analyser ) :
-        m_grid( audioProcessorValueTreeState ),
-        m_graph( audioProcessorValueTreeState, analyser )
+    Analyser &analyser
+) :
+    m_grid( audioProcessorValueTreeState ),
+    m_graph( audioProcessorValueTreeState, analyser )
 {
     addAndMakeVisible( m_grid );
     m_grid.setGridColour( juce::Colour( 0xff464646 ) );

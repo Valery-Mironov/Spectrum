@@ -2,7 +2,8 @@
 
 ChannelControls::ChannelControls(
     juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
-) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
+) :
+    mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
 {    
     addAndMakeVisible( m_leftChannelTextButton );
     m_leftChannelTextButton.setButtonText( "Left" );

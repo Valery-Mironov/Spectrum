@@ -2,7 +2,8 @@
 
 RefreshControl::RefreshControl(
     juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
-) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
+) :
+    mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
 {
     addAndMakeVisible( m_refreshSlider );
     m_refreshSlider.setSliderStyle( juce::Slider::SliderStyle::LinearBar );

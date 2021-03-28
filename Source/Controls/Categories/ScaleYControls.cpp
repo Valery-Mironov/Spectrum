@@ -2,7 +2,8 @@
 
 ScaleYControls::ScaleYControls(
     juce::AudioProcessorValueTreeState &audioProcessorValueTreeState
-) : mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
+) :
+    mr_audioProcessorValueTreeState( audioProcessorValueTreeState )
 {
     addAndMakeVisible( m_rangeModeTextButton );
     m_rangeModeTextButton.setButtonText( "Range" );
