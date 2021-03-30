@@ -43,7 +43,7 @@ private:
     static constexpr int m_minimumFrequencyInHertz { 24 };
     
     std::map<int, float> m_baseTenLogarithm;
-    std::map<int, float> m_noteGridPoints;
+    std::map<int, float> m_frequencyGridPoints;
     std::map<int, std::unique_ptr<juce::Label>> m_labels;
     
     

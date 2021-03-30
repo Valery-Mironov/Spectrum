@@ -9,13 +9,13 @@ void GraphBins::drawFrame( juce::Graphics &g )
     auto width  = static_cast<float>( getLocalBounds().getWidth() );
     auto height = static_cast<float>( getLocalBounds().getHeight() );
     
-    for ( int x { 0 }; x < mr_analyser.getScopeSize(); ++x )
+    for ( auto x { 0 }; x < mr_analyser.getScopeSize(); ++x )
     {
         auto xPosition =
             juce::jmap(
                 normalizeValue( x ),
                 0.0f,
-                normalizeValue( mr_analyser.getScopeSize() - 1 ),
+                normalizeValue( static_cast<int>( mr_analyser.getScopeSize() ) - 1 ),
                 0.0f,
                 width
             );

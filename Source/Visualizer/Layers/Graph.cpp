@@ -8,7 +8,8 @@ Graph::Graph(
     mr_analyser( analyser ),
     m_graphMaximumsLine( analyser ),
     m_graphLine( analyser ),
-    m_graphBins( analyser )
+    m_graphBins( analyser ),
+    m_infoLabel( audioProcessorValueTreeState )
 {
     addChildComponent( m_graphMaximumsLine );
     m_graphMaximumsLine.setColour( m_volumeMaximumsGraphColour );
@@ -18,6 +19,8 @@ Graph::Graph(
     
     addChildComponent( m_graphBins );
     m_graphBins.setColour( m_volumeGraphColour );
+    
+    addChildComponent( m_infoLabel );
     
     mr_audioProcessorValueTreeState.addParameterListener( "REFRESH_ID", this );
     mr_audioProcessorValueTreeState.addParameterListener( "BINS_ID", this );
@@ -44,6 +47,7 @@ void Graph::resized()
     m_graphMaximumsLine.setBounds( getLocalBounds() );
     m_graphLine.setBounds( getLocalBounds() );
     m_graphBins.setBounds( getLocalBounds() );
+    m_infoLabel.setBounds( getLocalBounds() );
 }
 
 
@@ -51,6 +55,33 @@ void Graph::resized()
 void Graph::mouseDown( const juce::MouseEvent &event )
 {
     mr_analyser.resetScopeMaximumsData();
+}
+
+
+
+void Graph::mouseEnter( const juce::MouseEvent &event )
+{
+    m_infoLabel.setVisible( true );
+}
+
+
+
+void Graph::mouseExit( const juce::MouseEvent &event )
+{
+    m_infoLabel.setVisible( false );
+}
+
+
+
+void Graph::mouseMove( const juce::MouseEvent &event )
+{
+    auto position = event.getMouseDownPosition();
+    
+    m_infoLabel.setData(
+        position.getX(),
+        position.getY(),
+        m_scaleTypeIsLogarithmic.load()
+    );
 }
 
 

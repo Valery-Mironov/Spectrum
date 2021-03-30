@@ -16,7 +16,7 @@ void LogarithmicScale::paint( juce::Graphics &g )
 {
     g.setColour( m_gridColour );
     
-    for ( const auto &[ frequency, x ] : m_noteGridPoints )
+    for ( const auto &[ frequency, x ] : m_frequencyGridPoints )
     {
         g.drawLine(
             x,
@@ -29,7 +29,7 @@ void LogarithmicScale::paint( juce::Graphics &g )
     for ( const auto &[ frequency, label ] : m_labels )
     {
         label->setBounds(
-            m_noteGridPoints[ frequency ] - 14,
+            m_frequencyGridPoints[ frequency ] - 14,
             1,
             28,
             20
@@ -114,11 +114,11 @@ void LogarithmicScale::calculateFrequencyGrid()
     auto targetRangeMinimum = 0.0f;
     auto targetRangeMaximem = static_cast<float>( getWidth() );
     
-    m_noteGridPoints.clear();
+    m_frequencyGridPoints.clear();
     
     for ( const auto &[ frequency, value ] : m_baseTenLogarithm )
     {
-        m_noteGridPoints[ frequency ] =
+        m_frequencyGridPoints[ frequency ] =
             juce::jmap(
                 value,
                 sourceRangeMinimum,

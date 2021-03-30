@@ -42,7 +42,7 @@ void Visualizer::resized()
 
 
 // ============================================================================
-void Visualizer::setBackgroundColour( juce::Colour colour )
+void Visualizer::setBackgroundColour( const juce::Colour &colour )
 {
     m_backgroundColour = colour;
 }

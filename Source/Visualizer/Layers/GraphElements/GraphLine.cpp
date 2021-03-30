@@ -27,16 +27,15 @@ void GraphLine::setColour( const juce::Colour &colour )
 
 
 // ============================================================================
-template<class Type>
-float GraphLine::normalizeValue( const Type T )
+float GraphLine::normalizeValue( const int value )
 {
-    if ( T != 0 && m_isLogarithmicScale.load() )
+    if ( value != 0 && m_isLogarithmicScale.load() )
     {        
-        return std::log10f( static_cast<float>( T ) / mr_analyser.getOffset() );
+        return std::log10f( static_cast<float>( value ) / mr_analyser.getOffset() );
     }
     else
     {
-        return static_cast<float>( T );
+        return static_cast<float>( value );
     }
 }
 
@@ -66,7 +65,7 @@ void GraphLine::drawFrame( juce::Graphics &g )
         )
     );
     
-    for ( int x { 1 }; x < mr_analyser.getScopeSize(); ++x )
+    for ( auto x { 1 }; x < mr_analyser.getScopeSize(); ++x )
     {
         curve.lineTo(
             {
@@ -74,7 +73,7 @@ void GraphLine::drawFrame( juce::Graphics &g )
                 juce::jmap(
                     normalizeValue( x ),
                     0.0f,
-                    normalizeValue( mr_analyser.getScopeSize() - 1 ),
+                    normalizeValue( static_cast<int>( mr_analyser.getScopeSize() ) - 1 ),
                     0.0f,
                     width
                 ),

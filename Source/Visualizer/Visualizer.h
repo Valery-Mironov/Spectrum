@@ -28,7 +28,7 @@ public:
     
     
     // ========================================================================
-    void setBackgroundColour( juce::Colour );
+    void setBackgroundColour( const juce::Colour & );
     
     
     // ========================================================================

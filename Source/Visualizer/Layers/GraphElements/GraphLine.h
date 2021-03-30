@@ -23,8 +23,7 @@ public:
     
 protected:
     // ========================================================================
-    template<class Type>
-    float normalizeValue( const Type );
+    float normalizeValue( const int value );
     virtual float getScopeDataFromAnalyser( const size_t );
     virtual void drawFrame( juce::Graphics & );
     
@@ -32,7 +31,7 @@ protected:
     // ========================================================================
     Analyser &mr_analyser;
     std::atomic<bool> m_isLogarithmicScale { true };
-    juce::Colour m_colour { 0x0048bde8 };
+    juce::Colour m_colour { 0xff48bde8 };
     
     
     // ========================================================================

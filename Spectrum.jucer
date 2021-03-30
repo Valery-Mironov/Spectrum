@@ -50,6 +50,10 @@
             <FILE id="porCDY" name="NoteScale.h" compile="0" resource="0" file="Source/Visualizer/Layers/GridElements/NoteScale.h"/>
           </GROUP>
           <GROUP id="{5F545FC2-3A5B-1377-BB32-C7DD852D64A2}" name="GraphElements">
+            <FILE id="UjWzVq" name="GraphInfoLabel.cpp" compile="1" resource="0"
+                  file="Source/Visualizer/Layers/GraphElements/GraphInfoLabel.cpp"/>
+            <FILE id="M2ChML" name="GraphInfoLabel.h" compile="0" resource="0"
+                  file="Source/Visualizer/Layers/GraphElements/GraphInfoLabel.h"/>
             <FILE id="BzIqei" name="GraphMaximumsLine.cpp" compile="1" resource="0"
                   file="Source/Visualizer/Layers/GraphElements/GraphMaximumsLine.cpp"/>
             <FILE id="dLvNZM" name="GraphMaximumsLine.h" compile="0" resource="0"

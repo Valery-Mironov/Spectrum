@@ -5,6 +5,7 @@
 #include "GraphElements/GraphLine.h"
 #include "GraphElements/GraphBins.h"
 #include "GraphElements/GraphMaximumsLine.h"
+#include "GraphElements/GraphInfoLabel.h"
 
 // ****************************************************************************
 // GRAPH CLASS
@@ -25,6 +26,9 @@ public:
     
     // ========================================================================
     void mouseDown( const juce::MouseEvent & ) override;
+    void mouseEnter( const juce::MouseEvent & ) override;
+    void mouseExit( const juce::MouseEvent & ) override;
+    void mouseMove( const juce::MouseEvent & ) override;
     
     
     // ========================================================================
@@ -54,6 +58,7 @@ private:
     GraphMaximumsLine m_graphMaximumsLine;
     GraphLine m_graphLine;
     GraphBins m_graphBins;
+    GraphInfoLabel m_infoLabel;
     
     std::atomic<bool> m_graphStyleIsLine { true };
     std::atomic<bool> m_maximumVolumesIsVisible { true };
